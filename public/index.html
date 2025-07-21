@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CrisisBoard</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase v8 (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- EmailJS v3 (classic) -->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    (function () {
+      emailjs.init("VEA5j4KzEKqfCZQOp");      // ⬅️ 1. put your EmailJS PUBLIC KEY here
+    })();
+  </script>
+</head>
+
+<body class="bg-gray-100 h-screen flex overflow-hidden">
+
+  <!-- LEFT: complaint list -->
+  <div class="w-1/5 bg-white p-6 overflow-y-auto h-full">
+    <h2 class="text-2xl font-semibold mb-4">Your Complaints</h2>
+<div class="relative h-full">
+  <!-- Message shown when no complaints or not signed in -->
+  <div id="emptyStateMsg" class="absolute inset-0 flex items-center justify-center text-gray-500 text-sm text-center px-4 hidden"></div>
+
+  <!-- Complaint list -->
+  <ul id="complaintsList" class="space-y-2 text-gray-700 text-sm"></ul>
+</div>
+  </div>
+
+  <!-- RIGHT: submission form + navbar -->
+  <div class="w-4/5 p-6 flex flex-col">
+    <!-- Dummy navbar -->
+    <div class="flex space-x-6 text-lg font-medium">
+      <a href="#" class="text-gray-700 hover:text-black">Resolved</a>
+      <a href="#" class="text-gray-700 hover:text-black">Community</a>
+      <a href="#" class="text-gray-700 hover:text-black">Inbox</a>
+    </div>
+
+    <h1 class="text-3xl font-bold mt-52 mb-4 text-gray-800">Submit an Issue</h1>
+
+    <form id="complaintForm" class="space-y-4">
+      <textarea id="issueText" rows="1" required
+        oninput="autoResize(this)"
+        class="w-full p-3 rounded-xl border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition hover:shadow-md resize-none overflow-hidden max-h-60"
+        placeholder="Describe your issue..."></textarea>
+
+      <label class="flex items-center gap-2 text-sm text-gray-600">
+        <input type="checkbox" id="includeEmail" class="form-checkbox">
+        Include my email in the report
+      </label>
+
+      <button type="submit"
+        class="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition">
+        Submit
+      </button>
+    </form>
+
+    <p id="statusMessage" class="mt-4 text-sm text-green-600"></p>
+    <p id="errorMessage"  class="mt-2 text-sm text-red-600 hidden"></p>
+
+    <button id="signInBtn"
+      class="mt-6 bg-blue-600 text-white px-3 py-2 rounded hidden">
+      Sign in with Google
+    </button>
+
+    <p id="userEmail" class="text-sm text-gray-600 mt-2"></p>
+    <button id="signOutBtn"
+      class="mt-2 bg-red-500 text-white px-3 py-2 rounded">
+      Sign Out
+    </button>
+  </div>
+
+  <!-- MAIN APP LOGIC -->
+  <script>
+    /* ───────────────── Firebase init ───────────────── */
+    const firebaseConfig = {
+      apiKey: "AIzaSyBc2u4x0FsD-4ZQky2FD9zkKkXk1oktWYY",
+      authDomain: "crisisboard-b78cc.web.app", 
+      projectId: "crisisboard-b78cc",
+      storageBucket: "crisisboard-b78cc.appspot.com",
+      messagingSenderId: "404790020757",
+      appId: "1:404790020757:web:e63a541ae7ba0f7074299c"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db   = firebase.firestore();
+
+    /* ───────────────── DOM refs ───────────────── */
+    const signInBtn      = document.getElementById("signInBtn");
+    const signOutBtn     = document.getElementById("signOutBtn");
+    const userEmailLbl   = document.getElementById("userEmail");
+    const complaintForm  = document.getElementById("complaintForm");
+    const issueText      = document.getElementById("issueText");
+    const includeEmailCb = document.getElementById("includeEmail");
+    const statusMsg      = document.getElementById("statusMessage");
+    const errorMsg       = document.getElementById("errorMessage");
+    const complaintsList = document.getElementById("complaintsList");
+    let   currentUser    = null;
+
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    signInBtn.addEventListener("click", () => auth.signInWithRedirect(provider));
+    signOutBtn.addEventListener("click", () => auth.signOut().then(() => location.reload()));
+
+    /* ───────────────── Helpers ───────────────── */
+    const truncate = (t,n=10)=>t.split(" ").length>n?t.split(" ").slice(0,n).join(" ")+"…":t;
+    const fallbackCategory = txt=>{
+      const l=txt.toLowerCase();
+      if(/water|washroom|clean|dirty/.test(l))          return "Hygiene";
+      if(/tap|broken|fan|leak/.test(l))           return "Maintenance";
+      if(/steal|security|id/.test(l))             return "Security";
+      if(/exam|marks/.test(l))              return "Academics";
+      if(/building|lift|electricity/.test(l))     return "Infrastructure";
+      if(/food|mess|canteen/.test(l))             return "Food";
+      return "Other";
+    };
+
+    /* ───────────────── Gemini (best‑effort) ───────────────── */
+    const GEMINI_API_KEY = "AIzaSyACcUdzfPAGTK1D0dc2gjPCjCFVz5uPXv8";
+    async function getCategory(issue){
+      try{
+        const r=await fetch(
+          `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`,
+          {method:"POST",headers:{ "Content-Type":"application/json"},
+           body:JSON.stringify({contents:[{parts:[{text:
+`Classify the complaint into ONE category:
+Hygiene, Maintenance, Security, Academics, Infrastructure, Food, Other.
+
+Return only the category word.
+
+Complaint: "${issue}"` }]}]})});
+        const j=await r.json();
+        const raw=j?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        const clean=raw?.replace(/[^A-Za-z]/g,"").toLowerCase();
+        const ok=["hygiene","maintenance","security","academics","infrastructure","food","other"];
+        return ok.includes(clean)? clean[0].toUpperCase()+clean.slice(1):null;
+      }catch(e){console.error("Gemini error",e);return null;}
+    }
+
+    /* ───────────────── Email routing map ───────────────── */
+    const departmentEmails={
+      Hygiene:"abhisar.choubey@gmail.com",
+      Maintenance:"abhisar.choubey@gmail.com",
+      Security:"abhisar.choubey@gmail.com",
+      Academics:"abhisar.choubey@gmail.com",
+      Infrastructure:"abhisar.choubey@gmail.com",
+      Food:"abhisar.choubey@gmail.com",
+      Other:"abhisar.choubey@gmail.com"
+    };
+
+    /* ───────────────── Popup helper: domain error ───────────────── */
+    function showDomainError() {
+      const wrapper = document.getElementById("domainPopup");
+      const box     = wrapper.querySelector("div");
+
+      wrapper.classList.remove("pointer-events-none");
+      box.classList.remove("opacity-0", "scale-75");
+      box.classList.add("opacity-100", "scale-100");
+
+      setTimeout(() => {
+        box.classList.add("opacity-0", "scale-75");
+        box.classList.remove("opacity-100", "scale-100");
+        wrapper.classList.add("pointer-events-none");
+      }, 3000);
+
+      // auto sign‑out after short delay so user sees message first
+      setTimeout(() => auth.signOut(), 300);
+    }
+
+    /* ───────────────── Auth listener ───────────────── */
+    auth.onAuthStateChanged(user => {
+  if (user) {
+    if (!user.email.toLowerCase().endsWith("@vupune.ac.in")) {
+      showDomainError();
+      return;
+    }
+    currentUser = user;
+    userEmailLbl.textContent = `Signed in as ${user.email}`;
+    signInBtn.classList.add("hidden");
+    signOutBtn.classList.remove("hidden");
+    loadComplaints();
+  } else {
+    currentUser = null;
+    signInBtn.classList.remove("hidden");
+    signOutBtn.classList.add("hidden");
+    userEmailLbl.textContent = "";
+    complaintsList.innerHTML = `<li class="text-gray-500 text-sm">Sign in to view complaints</li>`; // ✅ added
+  }
+});
+
+
+    /* ───────────────── Submit handler ───────────────── */
+    complaintForm.addEventListener("submit",async e=>{
+      e.preventDefault();
+      if(!currentUser){errorMsg.textContent="⚠️ Sign in first.";errorMsg.classList.remove("hidden");return;}
+      const issue=issueText.value.trim();
+      if(!issue){errorMsg.textContent="⚠️ Enter an issue.";errorMsg.classList.remove("hidden");return;}
+      errorMsg.classList.add("hidden");statusMsg.textContent="⏳ Categorizing…";
+
+      let category = await getCategory(issue);
+      if(!category){category=fallbackCategory(issue);console.warn("Fallback:",category);}    
+      const emailToSave = includeEmailCb.checked ? currentUser.email.toLowerCase() : "anonymous";
+
+      await db.collection("complaints").add({
+        issue,category,email:emailToSave,ownerId:currentUser.uid,timestamp:new Date()
+      });
+
+      /* ─── Send EmailJS ─── */
+      emailjs.send(
+        "service_wsd1ei9",
+        "template_hf0cmam",
+        {
+          to_email: departmentEmails[category] || departmentEmails.Other,
+          email: emailToSave,
+          message: issue,
+          category,
+          time: new Date().toLocaleString()
+        }
+      ).then(() => {
+        console.log("📧 Email sent");
+        showPopup(); // ✅ trigger popup
+      }).catch(err => console.error("EmailJS error", err));
+
+      statusMsg.textContent=`✅ Complaint submitted! Category: ${category}`;
+      issueText.value=""; includeEmailCb.checked=false;
+      setTimeout(()=>statusMsg.textContent="",4000);
+    });
+
+    /* ───────────────── Load complaints ───────────────── */
+    function loadComplaints() {
+  db.collection("complaints")
+    .where("ownerId", "==", currentUser.uid)
+    .orderBy("timestamp", "desc")
+    .onSnapshot(snap => {
+      complaintsList.innerHTML = "";
+      if (snap.empty) {
+        complaintsList.innerHTML = `<li class="text-gray-500 text-sm">Submit your first complaint</li>`; // ✅ added
+        return;
+      }
+      snap.forEach(doc => {
+        const d = doc.data();
+        const li = document.createElement("li");
+        li.className = "relative group bg-white border p-2 rounded shadow-sm";
+        li.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span>
+              ${truncate(d.issue)}
+              <span class="text-xs text-gray-500">[${d.category}]</span>
+            </span>
+            <button class="text-red-500 hover:text-red-700 text-sm ml-2" onclick="deleteComplaint('${doc.id}')">🗑️</button>
+          </div>
+          <div class="absolute z-10 hidden group-hover:block bg-black text-white text-xs rounded p-2 w-64 leading-snug shadow-lg
+            left-1/2 -translate-x-1/2 top-full mt-1">${d.issue}</div>`;
+        complaintsList.appendChild(li);
+      });
+    });
+}
+
+
+    /* ───────────────── Auto‑resize ───────────────── */
+    window.autoResize = ta => { ta.style.height="auto"; ta.style.height=ta.scrollHeight+"px"; };
+
+    function showPopup() {
+      const wrapper = document.getElementById("popup");
+      const box = wrapper.querySelector("div");
+
+      wrapper.classList.remove("pointer-events-none");
+      box.classList.remove("opacity-0", "scale-75");
+      box.classList.add("opacity-100", "scale-100");
+
+      setTimeout(() => {
+        box.classList.add("opacity-0", "scale-75");
+        box.classList.remove("opacity-100", "scale-100");
+        wrapper.classList.add("pointer-events-none");
+      }, 3000);
+    }
+
+    function deleteComplaint(docId) {
+      const li = document.querySelector(`button[onclick="deleteComplaint('${docId}')"]`)?.closest("li");
+      if (li) {
+        li.classList.add("opacity-0", "-translate-x-4", "transition-all", "duration-300");
+        setTimeout(() => {
+          db.collection("complaints").doc(docId).delete()
+            .then(() => console.log("🗑️ Complaint deleted"))
+            .catch(err => console.error("❌ Delete error:", err));
+        }, 300);
+      }
+    }
+
+
+  </script>
+
+  <!-- ✅ success popup (already present) -->
+  <div id="popup" class="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+    <div class="bg-white border border-green-600 shadow-2xl rounded-2xl px-8 py-6 text-center text-lg font-semibold text-green-700 opacity-0 scale-75 transition-all duration-500 transform"
+         style="max-width: 90%; min-width: 300px;">
+      ✅ The report has been sent to the concerned authority via email.
+    </div>
+  </div>
+
+  <!-- ❌ domain error popup -->
+  <div id="domainPopup" class="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+    <div class="bg-white border border-red-600 shadow-2xl rounded-2xl px-8 py-6 text-center text-lg font-semibold text-red-700 opacity-0 scale-75 transition-all duration-500 transform"
+         style="max-width: 90%; min-width: 300px;">
+      ❌ Only <span class="font-bold">@vupune.ac.in</span> emails are allowed.
+    </div>
+  </div>
+
+</body>
+</html>
