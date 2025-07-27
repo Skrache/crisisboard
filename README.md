@@ -12,7 +12,6 @@ CrisisBoard is a simple and powerful web app that helps college students submit 
 - The issue is **automatically categorized** using **AI (Gemini API)**.
 - The complaint is then **emailed to the correct authority**.
 - Students can see all their past complaints in a simple list.
-- The interface is clean, mobile-friendly, and supports **dark mode**.
 - They can also **delete** their complaints with a smooth animation.
 
 ---
