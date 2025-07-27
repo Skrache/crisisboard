@@ -25,8 +25,6 @@ CrisisBoard is a simple and powerful web app that helps college students submit 
 - 📬 Automatic email to relevant college department
 - 📋 See your own submitted complaints
 - 🗑️ Delete button with smooth animation
-- 🌓 Light/Dark mode toggle
-- 📱 Mobile-responsive UI
 - ✅ Easy and clean user interface inspired by ChatGPT
 
 ---
@@ -57,7 +55,6 @@ CrisisBoard is a simple and powerful web app that helps college students submit 
 4. **Email Sending**: Based on the category, the complaint is sent to the correct department (like Security or Maintenance).
 5. **Storage**: The complaint is saved in a database (Firestore).
 6. **Your Dashboard**: You can see your past complaints and even delete them.
-7. **Dark Mode**: You can switch between light and dark themes.
 
 ---
 
