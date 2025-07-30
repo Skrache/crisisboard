@@ -1,3 +1,5 @@
+JOIN OUR TELEGRAM TROUP FOR PROPER COMMUNICATION - https://t.me/+Aq8v-Ig2SqFjZjRl
+
 # 🛡️ CrisisBoard
 
 CrisisBoard is a simple and powerful web app that helps college students submit complaints or issues to their college authorities — **anonymously or with their identity**. It makes sure that every complaint is sent to the right department and is also stored safely.
