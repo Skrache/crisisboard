@@ -1,4 +1,4 @@
-**NOTE: This is my personal projects which I have submitted to Google under a special program and at the end of GSSoC'25 I'll be submitting my name to Google and I will mention the names of top contributors in my project so if you guys want your name to get highlighted infront of Google then you're at the right place**
+**NOTE: This is my personal projects which I have submitted to Google under a special program and it'll also be utilised in different college campuses so at the end of GSSoC'25 I'll be submitting my name to Google and I will mention the names of top contributors in my project so if you guys want your name to get highlighted infront of Google then you're at the right place**
 
 **Join our telegram for proper communication - https://t.me/+Aq8v-Ig2SqFjZjRl**
 
