@@ -1,9 +1,11 @@
+**NOTE: This is my personal projects which I have submitted to Google under a special program and at the end of GSSoC'25 I'll be submitting my name to Google and I will mention the names of top contributors in my project so if you guys want your name to get highlighted infront of Google then you're at the right place**
+
+**Join our telegram for proper communication - https://t.me/+Aq8v-Ig2SqFjZjRl**
+
+
 # 🛡️ CrisisBoard
 
 CrisisBoard is a simple and powerful web app that helps college students submit complaints or issues to their college authorities — **anonymously or with their identity**. It makes sure that every complaint is sent to the right department and is also stored safely.
-
-JOIN OUR TELEGRAM GROUP FOR PROPER COMMUNICATION - https://t.me/+Aq8v-Ig2SqFjZjRl
-
 ---
 
 ## 🔍 What This App Does
@@ -44,7 +46,7 @@ JOIN OUR TELEGRAM GROUP FOR PROPER COMMUNICATION - https://t.me/+Aq8v-Ig2SqFjZjR
 - Firebase Firestore (for storing complaints)
 - Firebase Cloud Functions (for secure backend code)
 - Google Gemini API (for auto-categorizing issues)
-- SendGrid or Nodemailer (to send complaint emails)
+- SendGrid or Nodemailer or EmailJs (to send complaint emails)
 
 ---
 
@@ -77,3 +79,5 @@ JOIN OUR TELEGRAM GROUP FOR PROPER COMMUNICATION - https://t.me/+Aq8v-Ig2SqFjZjR
    ```bash
    git clone https://github.com/your-username/crisisboard.git
    cd crisisboard
+
+   REMEMBER TO CREATE A SEPERATE BRANCH AND THEN WORK ON IT, DON'T COMMIT AND RAISE PR TO THE DEFAULT BRANCH
