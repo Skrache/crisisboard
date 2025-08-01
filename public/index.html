@@ -9,9 +9,9 @@
       /* Custom styles for dark mode and theme toggle */
       .theme-toggle {
         position: relative;
-        width: 60px;
+        width: 80px;
         height: 30px;
-        background: #374151;
+        background: #000000;
         border-radius: 15px;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -35,7 +35,7 @@
       }
       
       .theme-toggle.dark::before {
-        transform: translateX(30px);
+        transform: translateX(50px);
         background: #ffffff;
       }
       
@@ -115,16 +115,6 @@
       
       body.dark .text-white {
         color: #ffffff !important;
-      }
-      
-      /* Clear Form button specific dark mode fixes */
-      body.dark button[onclick*="Clear Form"] {
-        background-color: #4b5563 !important;
-        color: #e5e7eb !important;
-      }
-      
-      body.dark button[onclick*="Clear Form"]:hover {
-        background-color: #6b7280 !important;
       }
       
       /* Additional text color fixes for better visibility */
@@ -334,19 +324,6 @@
         color-scheme: dark;
       }
       
-      /* Clear Form button dark mode styling */
-      body.dark .dark\:bg-gray-600 {
-        background-color: #4b5563 !important;
-      }
-      
-      body.dark .dark\:text-gray-200 {
-        color: #e5e7eb !important;
-      }
-      
-      body.dark .dark\:hover\:bg-gray-500:hover {
-        background-color: #6b7280 !important;
-      }
-      
       /* Dark mode styling for dynamically created items */
       body.dark .dark-mode-item {
         background-color: #1f2937 !important;
@@ -359,18 +336,6 @@
       
       body.dark .dark-mode-item .text-gray-500 {
         color: #9ca3af !important;
-      }
-      
-      /* Full screen form styling */
-      .form-container {
-        min-height: calc(100vh - 200px);
-        display: flex;
-        flex-direction: column;
-      }
-      
-      .form-textarea {
-        flex: 1;
-        min-height: 400px;
       }
       
       /* Smooth transitions for all elements */
@@ -413,110 +378,104 @@
       }
     </style>
   </head>
-  <body class="flex min-h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
+  <body class="flex h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
     
     <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-lg p-6 border-r border-gray-200 transition-all duration-300">
+    <aside class="w-64 bg-white shadow-lg p-6 border-r border-gray-200 transition-all duration-300 h-screen">
       <div class="flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold text-gray-800 text-center flex-1">CrisisBoard</h1>
+        <h1 class="text-xl font-bold text-gray-800">CrisisBoard</h1>
         <!-- Theme Toggle Button -->
         <div class="theme-toggle" id="themeToggle" title="Toggle dark/light mode"></div>
       </div>
       
       <div class="space-y-4">
         <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
-          <h3 class="font-semibold text-blue-800 mb-2 text-center">Your Complaints</h3>
-          <a href="#" class="text-blue-600 hover:text-blue-800 text-sm transition-colors block text-center">Sign in to view complaints</a>
+          <h3 class="font-semibold text-blue-800 mb-2">Your Complaints</h3>
+          <a href="#" class="text-blue-600 hover:text-blue-800 text-sm transition-colors">Sign in to view complaints</a>
         </div>
         
         <div class="p-3 rounded-lg bg-green-50 border border-green-200">
-          <h3 class="font-semibold text-green-800 mb-2 text-center">Quick Stats</h3>
-          <div class="text-sm text-green-700 text-center">
+          <h3 class="font-semibold text-green-800 mb-2">Quick Stats</h3>
+          <div class="text-sm text-green-700">
             <div>Resolved: 12</div>
             <div>Pending: 3</div>
           </div>
-        </div>
-        
-        <!-- Google Sign-in Button in Dashboard -->
-        <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-          <h3 class="font-semibold text-gray-800 mb-3 text-center">Authentication</h3>
-          <button
-            id="signInBtn"
-            class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-2 px-4 rounded-lg shadow-md cursor-not-allowed opacity-75 text-sm font-medium transition-all duration-200"
-            disabled
-          >
-            <div class="flex items-center justify-center space-x-2">
-              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-              </svg>
-              <span>Sign in with Google</span>
-            </div>
-          </button>
-          <p class="text-xs text-gray-500 text-center mt-2">Coming Soon</p>
         </div>
       </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-8 overflow-y-auto flex flex-col h-screen">
+    <main class="flex-1 p-6 overflow-y-auto h-screen">
       <!-- Header with enhanced styling -->
-      <div class="mb-4 text-center">
-        <h2 class="text-2xl font-bold text-gray-800 mb-1">Welcome to CrisisBoard</h2>
+      <div class="mb-4">
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome to CrisisBoard</h2>
         <p class="text-gray-600 text-sm">Submit and track community issues efficiently</p>
       </div>
 
       <!-- Enhanced Tabs -->
-      <div class="flex space-x-1 mb-4 p-1 bg-gray-100 rounded-lg w-fit mx-auto">
-        <button class="px-3 py-1 rounded-md bg-white text-gray-800 font-medium shadow-sm transition-all duration-200 hover:shadow-md text-sm">Resolved</button>
-        <button class="px-3 py-1 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm">Community</button>
-        <button class="px-3 py-1 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm">Inbox</button>
+      <div class="flex space-x-1 mb-4 p-1 bg-gray-100 rounded-lg w-fit">
+        <button class="px-4 py-2 rounded-md bg-white text-gray-800 font-medium shadow-sm transition-all duration-200 hover:shadow-md">Resolved</button>
+        <button class="px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors">Community</button>
+        <button class="px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors">Inbox</button>
       </div>
 
-      <!-- Enhanced Form Section - Full Screen -->
-      <section class="w-full h-full flex flex-col form-container">
-        <div class="bg-white rounded-xl shadow-lg p-8 border border-gray-200 flex-1 flex flex-col">
-          <h3 class="text-3xl font-bold mb-8 text-gray-800 text-center">Submit an Issue</h3>
-          <form id="complaintForm" class="flex-1 flex flex-col space-y-6">
-            <div class="flex-1">
-              <label for="issueText" class="block text-lg font-medium text-gray-700 mb-4">Issue Description</label>
+      <!-- Enhanced Form Section -->
+      <section class="w-full">
+        <div class="bg-white rounded-xl shadow-lg p-5 border border-gray-200">
+          <h3 class="text-2xl font-bold mb-4 text-gray-800">Submit an Issue</h3>
+          <form id="complaintForm" class="space-y-4">
+            <div>
+              <label for="issueText" class="block text-sm font-medium text-gray-700 mb-2">Issue Description</label>
               <textarea
                 id="issueText"
-                rows="12"
+                rows="4"
                 placeholder="Describe your issue in detail..."
-                class="w-full h-full min-h-96 p-6 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 resize-none text-lg form-textarea"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 resize-none"
               ></textarea>
             </div>
             
-            <div class="flex items-center space-x-3 py-6 mt-4">
+            <div class="flex items-center space-x-3">
               <input 
                 type="checkbox" 
                 id="includeEmail" 
-                class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
               />
-              <label for="includeEmail" class="text-lg text-gray-700">Include my email in the report</label>
+              <label for="includeEmail" class="text-sm text-gray-700">Include my email in the report</label>
             </div>
             
-            <div class="flex space-x-4">
-              <button
-                type="submit"
-                class="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 text-lg"
-              >
-                Submit Issue
-              </button>
-              
-              <button
-                type="button"
-                onclick="document.getElementById('issueText').value = ''; document.getElementById('includeEmail').checked = false;"
-                class="px-8 py-4 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg transition-all duration-200 text-lg dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500"
-              >
-                Clear Form
-              </button>
-            </div>
+            <button
+              type="submit"
+              class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+            >
+              Submit Issue
+            </button>
             
-            <div id="statusMessage" class="text-center text-lg font-medium"></div>
+            <div id="statusMessage" class="text-center text-sm font-medium"></div>
           </form>
         </div>
       </section>
+
+      <!-- Enhanced Complaints List -->
+      <div class="mt-3 w-full">
+        <h3 class="text-base font-semibold mb-1 text-gray-800">Recent Issues</h3>
+        <div id="complaintsList" class="space-y-1"></div>
+      </div>
+
+      <!-- Enhanced Sign-in Button -->
+      <div class="mt-3 w-full">
+        <button
+          id="signInBtn"
+          class="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-8 rounded-lg shadow-lg cursor-not-allowed opacity-75"
+          disabled
+        >
+          <div class="flex items-center justify-center space-x-3">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-lg">Sign in with Google (Coming Soon)</span>
+          </div>
+        </button>
+      </div>
     </main>
 
     <!-- Theme Toggle Script -->
