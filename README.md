@@ -1,9 +1,17 @@
-**NOTE: This is my personal projects which I have submitted to Google under a special program and it'll also be utilised in different college campuses so at the end of GSSoC'25 I'll be submitting my name to Google and I will mention the names of top contributors in my project so if you guys want your name to get highlighted infront of Google then you're at the right place**
+**NOTE: This project is part of my personal submissions under a special Google program and will also be deployed across multiple college campuses. At the end of **GSSoC’25**, I’ll submit the project (including contributor credits) to Google’s program. **Top contributors will be highlighted in the credits**, so if you want your work to stand out in front of Google — you’re at the right place!**
 
 **Join our telegram for proper communication - https://t.me/+Aq8v-Ig2SqFjZjRl**
 
 
 # 🛡️ CrisisBoard
+
+![Status](https://img.shields.io/badge/status-active-success.svg)  
+![React](https://img.shields.io/badge/Frontend-React-blue?logo=react&logoColor=white) 
+![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38B2AC?logo=tailwindcss&logoColor=white)  
+![Firestore](https://img.shields.io/badge/Database-Firestore-orange?logo=firebase&logoColor=white)  
+![Gemini API](https://img.shields.io/badge/AI-Gemini_API-yellow?logo=google&logoColor=black)  
+![Vercel](https://img.shields.io/badge/Hosting-Vercel-black?logo=vercel&logoColor=white)  
+![GSSoC](https://img.shields.io/badge/Open%20Source-GSSoC'25-brightgreen?logo=github&logoColor=white)
 
 CrisisBoard is a simple and powerful web app that helps college students submit complaints or issues to their college authorities — **anonymously or with their identity**. It makes sure that every complaint is sent to the right department and is also stored safely.
 ---
@@ -42,9 +50,8 @@ CrisisBoard is a simple and powerful web app that helps college students submit 
 - Framer Motion (for smooth animations)
 
 ### Backend:
-- Firebase Authentication (for login)
-- Firebase Firestore (for storing complaints)
-- Firebase Cloud Functions (for secure backend code)
+-Vercel (for serverless backend & deployment)
+-Firestore (for storing complaints)
 - Google Gemini API (for auto-categorizing issues)
 - SendGrid or Nodemailer or EmailJs (to send complaint emails)
 
@@ -75,9 +82,65 @@ CrisisBoard is a simple and powerful web app that helps college students submit 
 
 ## 🧾 How to Run (for Developers)
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/your-username/crisisboard.git
-   cd crisisboard
 
-   REMEMBER TO CREATE A SEPERATE BRANCH AND THEN WORK ON IT, DON'T COMMIT AND RAISE PR TO THE DEFAULT BRANCH
+1. **Clone the repository**
+```bash
+git clone https://github.com/your-username/crisisboard.git
+cd crisisboard
+```
+
+2. **Install dependencies**
+```bash
+npm install
+```
+
+3. **Create a .env file with the following keys**
+```bash
+VITE_FIRESTORE_PROJECT_ID=your_project_id
+VITE_FIRESTORE_API_KEY=your_firestore_api_key
+VITE_GEMINI_API_KEY=your_gemini_key
+VITE_EMAIL_SERVICE_KEY=your_email_service_key
+```
+
+4. **Start development server**
+```bash
+npm run dev
+```
+
+---
+
+## 🤝 Contribution Guidelines
+We welcome contributors from **GSSoC’25** to make this project more Awesome!  
+
+---
+
+### 📌 Steps to Contribute
+
+1. **Fork** the repository  
+
+2. **Create a new branch** (do not commit directly to `main`)  
+```bash
+git checkout -b feature/your-feature-name
+````
+
+3. **Make your changes**
+
+4. **Commit with clear messages**
+
+```bash
+git commit -m "Added: [Feature name/bug fix]"
+```
+
+5. **Push your branch**
+
+```bash
+git push origin feature/your-feature-name
+```
+
+6. **Create a Pull Request (PR)** to the `main` branch
+
+---
+
+## *Tip:* Check existing issues or open a new one before starting work.
+
+REMEMBER TO CREATE A SEPERATE BRANCH AND THEN WORK ON IT, DON'T COMMIT AND RAISE PR TO THE DEFAULT BRANCH
