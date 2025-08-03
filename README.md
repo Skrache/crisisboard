@@ -6,11 +6,12 @@
 # 🛡️ CrisisBoard
 
 ![Status](https://img.shields.io/badge/status-active-success.svg)  
-![React](https://img.shields.io/badge/Frontend-React-blue)  
-![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38B2AC)  
-![Firebase](https://img.shields.io/badge/Backend-Firebase-orange)  
-![Gemini API](https://img.shields.io/badge/AI-Gemini_API-yellow)  
-![GSSoC](https://img.shields.io/badge/Open%20Source-GSSoC'25-brightgreen)  
+![React](https://img.shields.io/badge/Frontend-React-blue?logo=react&logoColor=white) 
+![TailwindCSS](https://img.shields.io/badge/UI-TailwindCSS-38B2AC?logo=tailwindcss&logoColor=white)  
+![Firestore](https://img.shields.io/badge/Database-Firestore-orange?logo=firebase&logoColor=white)  
+![Gemini API](https://img.shields.io/badge/AI-Gemini_API-yellow?logo=google&logoColor=black)  
+![Vercel](https://img.shields.io/badge/Hosting-Vercel-black?logo=vercel&logoColor=white)  
+![GSSoC](https://img.shields.io/badge/Open%20Source-GSSoC'25-brightgreen?logo=github&logoColor=white)
 
 CrisisBoard is a simple and powerful web app that helps college students submit complaints or issues to their college authorities — **anonymously or with their identity**. It makes sure that every complaint is sent to the right department and is also stored safely.
 ---
@@ -49,9 +50,8 @@ CrisisBoard is a simple and powerful web app that helps college students submit 
 - Framer Motion (for smooth animations)
 
 ### Backend:
-- Firebase Authentication (for login)
-- Firebase Firestore (for storing complaints)
-- Firebase Cloud Functions (for secure backend code)
+-Vercel (for serverless backend & deployment)
+-Firestore (for storing complaints)
 - Google Gemini API (for auto-categorizing issues)
 - SendGrid or Nodemailer or EmailJs (to send complaint emails)
 
@@ -96,11 +96,10 @@ npm install
 
 3. **Create a .env file with the following keys**
 ```bash
-FIREBASE_API_KEY=your_firebase_key
-FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-FIREBASE_PROJECT_ID=your_project_id
-GEMINI_API_KEY=your_gemini_key
-EMAIL_SERVICE_KEY=your_email_service_key
+VITE_FIRESTORE_PROJECT_ID=your_project_id
+VITE_FIRESTORE_API_KEY=your_firestore_api_key
+VITE_GEMINI_API_KEY=your_gemini_key
+VITE_EMAIL_SERVICE_KEY=your_email_service_key
 ```
 
 4. **Start development server**
@@ -143,4 +142,5 @@ git push origin feature/your-feature-name
 ---
 
 ## *Tip:* Check existing issues or open a new one before starting work.
+
 REMEMBER TO CREATE A SEPERATE BRANCH AND THEN WORK ON IT, DON'T COMMIT AND RAISE PR TO THE DEFAULT BRANCH
