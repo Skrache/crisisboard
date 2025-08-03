@@ -55,6 +55,161 @@
         right: 8px;
       }
       
+      /* Mobile menu toggle */
+      .mobile-menu-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 30px;
+        height: 25px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 10;
+      }
+      
+      .mobile-menu-toggle span {
+        width: 100%;
+        height: 3px;
+        background: #374151;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+      }
+      
+      body.dark .mobile-menu-toggle span {
+        background: #f9fafb;
+      }
+      
+      .mobile-menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+      }
+      
+      .mobile-menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+      
+      .mobile-menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -6px);
+      }
+      
+      /* Mobile close button */
+      .mobile-close-btn {
+        display: none;
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+        background: #ef4444;
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 60;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      
+      .mobile-close-btn:hover {
+        background: #dc2626;
+        transform: scale(1.15) rotate(90deg);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+      
+      .mobile-close-btn:active {
+        transform: scale(0.95) rotate(90deg);
+        transition: all 0.1s ease;
+      }
+      
+      body.dark .mobile-close-btn {
+        background: #dc2626;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+      }
+      
+      body.dark .mobile-close-btn:hover {
+        background: #b91c1c;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+      }
+      
+      /* Close button animation when sidebar opens */
+      .sidebar.open .mobile-close-btn {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+        animation: closeButtonAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .sidebar.open .mobile-close-btn::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, 0.2);
+        animation: closeButtonPulse 2s ease-in-out infinite;
+        z-index: -1;
+      }
+      
+      @keyframes closeButtonAppear {
+        0% {
+          transform: scale(0.5) rotate(-180deg);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.1) rotate(-90deg);
+          opacity: 0.7;
+        }
+        100% {
+          transform: scale(1) rotate(0deg);
+          opacity: 1;
+        }
+      }
+      
+      @keyframes closeButtonPulse {
+        0%, 100% {
+          transform: scale(1);
+          opacity: 0.3;
+        }
+        50% {
+          transform: scale(1.2);
+          opacity: 0.1;
+        }
+      }
+      
+      /* Responsive sidebar */
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          left: -100%;
+          top: 0;
+          z-index: 50;
+          transition: left 0.3s ease;
+        }
+        
+        .sidebar.open {
+          left: 0;
+        }
+        
+        .mobile-menu-toggle {
+          display: flex;
+        }
+        
+        .mobile-close-btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .main-content {
+          margin-left: 0;
+        }
+      }
+      
       /* Dark mode styles - Custom implementation for Tailwind v2 */
       body.dark {
         background-color: #111827 !important;
@@ -376,13 +531,50 @@
         background: rgba(0, 0, 0, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
+      
+      /* Responsive improvements */
+      @media (max-width: 640px) {
+        .theme-toggle {
+          width: 60px;
+          height: 25px;
+        }
+        
+        .theme-toggle::before {
+          width: 21px;
+          height: 21px;
+        }
+        
+        .theme-toggle.dark::before {
+          transform: translateX(35px);
+        }
+      }
     </style>
   </head>
-  <body class="flex h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
+  <body class="flex flex-col md:flex-row h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
+    
+    <!-- Mobile Header -->
+    <div class="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
+      <h1 class="text-lg font-bold text-gray-800">CrisisBoard</h1>
+      <div class="flex items-center space-x-3">
+        <div class="theme-toggle" id="themeToggleMobile" title="Toggle dark/light mode"></div>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
     
     <!-- Sidebar -->
-    <aside class="w-64 bg-white shadow-lg p-6 border-r border-gray-200 transition-all duration-300 h-screen">
-      <div class="flex items-center justify-between mb-6">
+    <aside class="sidebar w-full md:w-64 bg-white shadow-lg p-4 md:p-6 border-r border-gray-200 transition-all duration-300 h-screen md:h-auto relative">
+      <!-- Mobile Close Button -->
+      <button class="mobile-close-btn" id="mobileCloseBtn" title="Close menu">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+      
+      <div class="hidden md:flex items-center justify-between mb-6">
         <h1 class="text-xl font-bold text-gray-800">CrisisBoard</h1>
         <!-- Theme Toggle Button -->
         <div class="theme-toggle" id="themeToggle" title="Toggle dark/light mode"></div>
@@ -405,24 +597,24 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-6 overflow-y-auto h-screen">
+    <main class="main-content flex-1 p-4 md:p-6 overflow-y-auto h-screen">
       <!-- Header with enhanced styling -->
       <div class="mb-4">
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome to CrisisBoard</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Welcome to CrisisBoard</h2>
         <p class="text-gray-600 text-sm">Submit and track community issues efficiently</p>
       </div>
 
       <!-- Enhanced Tabs -->
-      <div class="flex space-x-1 mb-4 p-1 bg-gray-100 rounded-lg w-fit">
-        <button class="px-4 py-2 rounded-md bg-white text-gray-800 font-medium shadow-sm transition-all duration-200 hover:shadow-md">Resolved</button>
-        <button class="px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors">Community</button>
-        <button class="px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors">Inbox</button>
+      <div class="flex flex-wrap space-x-1 mb-4 p-1 bg-gray-100 rounded-lg w-fit">
+        <button class="px-3 md:px-4 py-2 rounded-md bg-white text-gray-800 font-medium shadow-sm transition-all duration-200 hover:shadow-md text-sm md:text-base">Resolved</button>
+        <button class="px-3 md:px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm md:text-base">Community</button>
+        <button class="px-3 md:px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm md:text-base">Inbox</button>
       </div>
 
       <!-- Enhanced Form Section -->
       <section class="w-full">
-        <div class="bg-white rounded-xl shadow-lg p-5 border border-gray-200">
-          <h3 class="text-2xl font-bold mb-4 text-gray-800">Submit an Issue</h3>
+        <div class="bg-white rounded-xl shadow-lg p-4 md:p-5 border border-gray-200">
+          <h3 class="text-xl md:text-2xl font-bold mb-4 text-gray-800">Submit an Issue</h3>
           <form id="complaintForm" class="space-y-4">
             <div>
               <label for="issueText" class="block text-sm font-medium text-gray-700 mb-2">Issue Description</label>
@@ -469,10 +661,10 @@
           disabled
         >
           <div class="flex items-center justify-center space-x-3">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
             </svg>
-            <span class="text-lg">Sign in with Google (Coming Soon)</span>
+            <span class="text-base md:text-lg">Sign in with Google (Coming Soon)</span>
           </div>
         </button>
       </div>
@@ -482,16 +674,23 @@
     <script>
       // Theme toggle functionality
       const themeToggle = document.getElementById('themeToggle');
+      const themeToggleMobile = document.getElementById('themeToggleMobile');
       const body = document.body;
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+      const sidebar = document.querySelector('.sidebar');
       
       // Check for saved theme preference or default to light mode
       const currentTheme = localStorage.getItem('theme') || 'light';
       body.classList.toggle('dark', currentTheme === 'dark');
-      themeToggle.classList.toggle('dark', currentTheme === 'dark');
+      themeToggle?.classList.toggle('dark', currentTheme === 'dark');
+      themeToggleMobile?.classList.toggle('dark', currentTheme === 'dark');
       
-      themeToggle.addEventListener('click', () => {
+      // Theme toggle function
+      function toggleTheme() {
         const isDark = body.classList.toggle('dark');
-        themeToggle.classList.toggle('dark', isDark);
+        themeToggle?.classList.toggle('dark', isDark);
+        themeToggleMobile?.classList.toggle('dark', isDark);
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
         
         // Update dynamically created items
@@ -503,6 +702,30 @@
             item.classList.remove('dark-mode-item');
           }
         });
+      }
+      
+      // Add event listeners for theme toggles
+      themeToggle?.addEventListener('click', toggleTheme);
+      themeToggleMobile?.addEventListener('click', toggleTheme);
+      
+      // Mobile menu toggle
+      mobileMenuToggle?.addEventListener('click', () => {
+        mobileMenuToggle.classList.toggle('active');
+        sidebar?.classList.toggle('open');
+      });
+      
+      // Mobile close button
+      mobileCloseBtn?.addEventListener('click', () => {
+        mobileMenuToggle?.classList.remove('active');
+        sidebar?.classList.remove('open');
+      });
+      
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!sidebar?.contains(e.target) && !mobileMenuToggle?.contains(e.target)) {
+          mobileMenuToggle?.classList.remove('active');
+          sidebar?.classList.remove('open');
+        }
       });
 
       // Form handling
@@ -521,8 +744,8 @@
         complaintItem.innerHTML = `
           <div class="flex items-start justify-between">
             <div class="flex-1">
-              <p class="text-gray-800">${text}</p>
-              <p class="text-sm text-gray-500 mt-2">Submitted just now</p>
+              <p class="text-gray-800 text-sm md:text-base">${text}</p>
+              <p class="text-xs md:text-sm text-gray-500 mt-2">Submitted just now</p>
             </div>
             <span class="ml-3 px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
               Pending
