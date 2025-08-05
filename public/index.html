@@ -626,6 +626,31 @@
               ></textarea>
             </div>
             
+            <div class="flex items-center space-x-3 mb-1">
+              <input 
+                type="checkbox" 
+                id="submitAnonymously" 
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                aria-describedby="privacyBadge"
+              />
+              <label for="submitAnonymously" class="text-sm text-gray-700">Submit Anonymously</label>
+              <div class="relative group" id="privacyTooltipContainer">
+                <button type="button" tabindex="0" aria-label="Privacy info" aria-describedby="privacyTooltip" class="ml-1 align-middle focus:outline-none" id="privacyTooltipBtn">
+                  <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500 group-focus:text-blue-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </button>
+                <div id="privacyTooltip" role="tooltip" class="absolute left-1/2 z-10 -translate-x-1/2 mt-2 w-64 rounded-lg bg-white border border-gray-200 shadow-lg p-3 text-xs text-gray-700 opacity-0 pointer-events-none transition-opacity duration-200" aria-live="polite">
+                  When enabled, your name or email won’t be stored or shared. Your identity remains private.
+                </div>
+              </div>
+            </div>
+            <div id="privacyBadgeContainer" class="flex items-center space-x-2 mb-2 opacity-0 pointer-events-none transition-opacity duration-300" aria-live="polite">
+              <span id="privacyBadge" class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-semibold">
+                <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10V7a2 2 0 0 0-1.106-1.789l-7-4a2 2 0 0 0-1.788 0l-7 4A2 2 0 0 0 2 7v5c0 5.523 4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                Privacy Assured
+              </span>
+            </div>
+            <div id="privacyLiveRegion" class="sr-only" aria-live="polite"></div>
+            
             <div class="flex items-center space-x-3">
               <input 
                 type="checkbox" 
@@ -780,5 +805,6 @@
         alert("Sign-in functionality will be implemented soon!");
       });
     </script>
+    <script src="app.js"></script>
   </body>
 </html>
