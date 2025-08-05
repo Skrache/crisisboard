@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filter Test</title>
+    <style>
+        .filter-panel {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-header {
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            padding: 0.75rem;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-header:hover {
+            background: #e2e8f0;
+        }
+        
+        .filter-content {
+            display: none !important;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .filter-content.open {
+            display: grid !important;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .filter-select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="filter-panel">
+        <div class="filter-header" id="filterHeader">
+            <div class="flex items-center gap-2">
+                <span class="font-medium">Advanced Filters</span>
+            </div>
+            <svg class="w-5 h-5 transform transition-transform" id="filterToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+        </div>
+        
+        <div class="filter-content" id="filterContent">
+            <div class="filter-group">
+                <label for="categoryFilter">Category</label>
+                <select id="categoryFilter" class="filter-select">
+                    <option value="">All Categories</option>
+                    <option value="hygiene">Hygiene</option>
+                    <option value="security">Security</option>
+                    <option value="food">Food Quality</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="statusFilter">Status</label>
+                <select id="statusFilter" class="filter-select">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleFilterPanel() {
+            console.log('toggleFilterPanel called');
+            const filterContent = document.getElementById('filterContent');
+            const filterToggleIcon = document.getElementById('filterToggleIcon');
+            
+            console.log('filterContent element:', filterContent);
+            console.log('filterToggleIcon element:', filterToggleIcon);
+            
+            if (filterContent) {
+                const wasOpen = filterContent.classList.contains('open');
+                console.log('Was open:', wasOpen);
+                
+                // Toggle the open class
+                filterContent.classList.toggle('open');
+                const isNowOpen = filterContent.classList.contains('open');
+                console.log('Is now open:', isNowOpen);
+                
+                console.log('Filter panel state:', {
+                    wasOpen: wasOpen,
+                    isNowOpen: isNowOpen,
+                    classes: filterContent.className,
+                    display: window.getComputedStyle(filterContent).display
+                });
+                
+                if (filterToggleIcon) {
+                    filterToggleIcon.style.transform = isNowOpen ? 'rotate(180deg)' : '';
+                }
+            } else {
+                console.error('filterContent element not found!');
+            }
+        }
+
+        // Add event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterHeader = document.getElementById('filterHeader');
+            if (filterHeader) {
+                filterHeader.addEventListener('click', function(e) {
+                    console.log('Filter header clicked!', e);
+                    toggleFilterPanel();
+                });
+                console.log('Filter header listener added');
+            } else {
+                console.error('Filter header not found!');
+            }
+        });
+    </script>
+</body>
+</html> 

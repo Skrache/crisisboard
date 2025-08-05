@@ -548,6 +548,334 @@
           transform: translateX(35px);
         }
       }
+      
+      /* Search and Filter Styles */
+      .search-container {
+        position: relative;
+        margin-bottom: 1rem;
+      }
+      
+      .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        background: white;
+      }
+      
+      .search-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+      
+      .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+        pointer-events: none;
+      }
+      
+      .search-suggestions {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+      }
+      
+      .search-suggestion {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f3f4f6;
+        transition: background-color 0.2s ease;
+      }
+      
+      .search-suggestion:hover {
+        background-color: #f9fafb;
+      }
+      
+      .search-suggestion:last-child {
+        border-bottom: none;
+      }
+      
+      .filter-panel {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+      }
+      
+      .filter-header {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        padding: 0.75rem;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease;
+      }
+      
+      .filter-header:hover {
+        background: #e2e8f0;
+      }
+      
+      .filter-content {
+        display: none !important;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        margin-top: 0.5rem;
+      }
+      
+      .filter-content.open {
+        display: grid !important;
+      }
+      
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .filter-group label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+      }
+      
+      .filter-select {
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        background: white;
+      }
+      
+      .filter-select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+      }
+      
+      .filter-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        background: #e0f2fe;
+        color: #0369a1;
+        border-radius: 1rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      
+      .filter-chip:hover {
+        background: #bae6fd;
+      }
+      
+      .filter-chip .remove {
+        font-size: 1rem;
+        line-height: 1;
+      }
+      
+      .sort-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .sort-select {
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        background: white;
+      }
+      
+      .search-highlight {
+        background: #fef3c7;
+        padding: 0.125rem 0.25rem;
+        border-radius: 0.25rem;
+      }
+      
+      .search-results-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 0.75rem;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+      }
+      
+      .search-history {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        z-index: 50;
+        max-height: 200px;
+        overflow-y: auto;
+        display: none;
+      }
+      
+      .search-history-item {
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        border-bottom: 1px solid #f3f4f6;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .search-history-item:hover {
+        background-color: #f9fafb;
+      }
+      
+      .search-history-item:last-child {
+        border-bottom: none;
+      }
+      
+      .search-history-icon {
+        color: #6b7280;
+        font-size: 0.875rem;
+      }
+      
+      /* Dark mode styles for search and filter */
+      body.dark .search-input {
+        background-color: #1f2937;
+        border-color: #374151;
+        color: #f9fafb;
+      }
+      
+      body.dark .search-input:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+      }
+      
+      body.dark .search-suggestions,
+      body.dark .search-history {
+        background-color: #1f2937;
+        border-color: #374151;
+      }
+      
+      body.dark .search-suggestion:hover,
+      body.dark .search-history-item:hover {
+        background-color: #374151;
+      }
+      
+      body.dark .filter-panel {
+        background-color: #1f2937;
+        border-color: #374151;
+      }
+      
+      body.dark .filter-select,
+      body.dark .sort-select {
+        background-color: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+      }
+      
+      body.dark .filter-select:focus,
+      body.dark .sort-select:focus {
+        border-color: #60a5fa;
+        box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+      }
+      
+      body.dark .filter-chip {
+        background: #1e3a8a;
+        color: #93c5fd;
+      }
+      
+      body.dark .filter-chip:hover {
+        background: #1e40af;
+      }
+      
+      body.dark .search-results-info {
+        background-color: #374151;
+        color: #f9fafb;
+      }
+      
+      body.dark .search-highlight {
+        background: #92400e;
+        color: #fef3c7;
+      }
+      
+      /* Dark mode filter panel styles */
+      body.dark .filter-header {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+      }
+      
+      body.dark .filter-header:hover {
+        background: #4b5563;
+      }
+      
+      body.dark .filter-content {
+        background: #1f2937;
+        border-color: #4b5563;
+      }
+      
+      body.dark .filter-select {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+      }
+      
+      body.dark .filter-group label {
+        color: #d1d5db;
+      }
+      
+      /* Responsive search and filter */
+      @media (max-width: 768px) {
+        .filter-content {
+          grid-template-columns: 1fr;
+        }
+        
+        .filter-chips {
+          flex-direction: column;
+        }
+        
+        .filter-chip {
+          width: fit-content;
+        }
+      }
     </style>
   </head>
   <body class="flex flex-col md:flex-row h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
@@ -602,6 +930,119 @@
       <div class="mb-4">
         <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Welcome to CrisisBoard</h2>
         <p class="text-gray-600 text-sm">Submit and track community issues efficiently</p>
+      </div>
+
+      <!-- Search and Filter System -->
+      <div class="search-container">
+        <div class="relative">
+          <svg class="search-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input 
+            type="text" 
+            id="searchInput" 
+            class="search-input" 
+            placeholder="Search complaints, categories, or keywords..."
+            autocomplete="off"
+          />
+          <div id="searchSuggestions" class="search-suggestions"></div>
+          <div id="searchHistory" class="search-history"></div>
+        </div>
+      </div>
+
+      <!-- Filter Panel -->
+      <div class="filter-panel">
+        <div class="filter-header" id="filterHeader">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path>
+            </svg>
+            <span class="font-medium">Advanced Filters</span>
+          </div>
+          <svg class="w-5 h-5 transform transition-transform" id="filterToggleIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </div>
+        
+        <div class="filter-content" id="filterContent">
+          <div class="filter-group">
+            <label for="categoryFilter">Category</label>
+            <select id="categoryFilter" class="filter-select">
+              <option value="">All Categories</option>
+              <option value="hygiene">Hygiene</option>
+              <option value="security">Security</option>
+              <option value="food">Food Quality</option>
+              <option value="electrical">Electrical Issues</option>
+              <option value="maintenance">Maintenance</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="statusFilter">Status</label>
+            <select id="statusFilter" class="filter-select">
+              <option value="">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="priorityFilter">Priority</label>
+            <select id="priorityFilter" class="filter-select">
+              <option value="">All Priorities</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="dateFilter">Date Range</label>
+            <select id="dateFilter" class="filter-select">
+              <option value="">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label for="locationFilter">Location</label>
+            <select id="locationFilter" class="filter-select">
+              <option value="">All Locations</option>
+              <option value="hostel">Hostel</option>
+              <option value="canteen">Canteen</option>
+              <option value="library">Library</option>
+              <option value="classroom">Classroom</option>
+              <option value="laboratory">Laboratory</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filters -->
+      <div class="filter-chips" id="activeFilters"></div>
+
+      <!-- Sort Options -->
+      <div class="sort-container">
+        <label for="sortSelect" class="text-sm font-medium text-gray-700">Sort by:</label>
+        <select id="sortSelect" class="sort-select">
+          <option value="date-desc">Newest First</option>
+          <option value="date-asc">Oldest First</option>
+          <option value="priority-desc">Priority (High to Low)</option>
+          <option value="priority-asc">Priority (Low to High)</option>
+          <option value="status">Status</option>
+          <option value="category">Category</option>
+        </select>
+      </div>
+
+      <!-- Search Results Info -->
+      <div class="search-results-info" id="searchResultsInfo" style="display: none;">
+        <span id="resultsCount">0 results found</span>
+        <button id="clearSearch" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Clear Search</button>
       </div>
 
       <!-- Enhanced Tabs -->
@@ -670,6 +1111,9 @@
       </div>
     </main>
 
+    <!-- Main Application Script -->
+    <script src="app.js"></script>
+    
     <!-- Theme Toggle Script -->
     <script>
       // Theme toggle functionality
@@ -728,57 +1172,7 @@
         }
       });
 
-      // Form handling
-      document.getElementById("complaintForm").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const text = document.getElementById("issueText").value.trim();
-        if (!text) {
-          alert("Please enter an issue.");
-          return;
-        }
-        
-        // Create complaint item
-        const complaintsList = document.getElementById("complaintsList");
-        const complaintItem = document.createElement("div");
-        complaintItem.className = "bg-white rounded-lg p-4 shadow-md border border-gray-200";
-        complaintItem.innerHTML = `
-          <div class="flex items-start justify-between">
-            <div class="flex-1">
-              <p class="text-gray-800 text-sm md:text-base">${text}</p>
-              <p class="text-xs md:text-sm text-gray-500 mt-2">Submitted just now</p>
-            </div>
-            <span class="ml-3 px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
-              Pending
-            </span>
-          </div>
-        `;
-        
-        // Apply dark mode classes if needed
-        if (body.classList.contains('dark')) {
-          complaintItem.classList.add('dark-mode-item');
-        }
-        
-        complaintsList.prepend(complaintItem);
-        
-        // Clear form
-        document.getElementById("issueText").value = "";
-        document.getElementById("includeEmail").checked = false;
-        
-        // Show success message
-        const statusMessage = document.getElementById("statusMessage");
-        statusMessage.textContent = "✅ Issue submitted successfully!";
-        statusMessage.className = "text-center text-sm font-medium text-green-600";
-        
-        setTimeout(() => {
-          statusMessage.textContent = "";
-          statusMessage.className = "text-center text-sm font-medium";
-        }, 3000);
-      });
-
-      // Sign-in button handler
-      document.getElementById("signInBtn").addEventListener("click", () => {
-        alert("Sign-in functionality will be implemented soon!");
-      });
+      // Note: Form handling and other functionality is now handled by app.js
     </script>
   </body>
 </html>

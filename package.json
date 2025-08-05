@@ -1,0 +1,43 @@
+{
+  "name": "crisisboard",
+  "version": "1.0.0",
+  "description": "A comprehensive complaint management system for college students with search and filter capabilities",
+  "main": "public/index.html",
+  "scripts": {
+    "start": "npx http-server public -p 3000 -o",
+    "dev": "npx http-server public -p 3000 -o -c-1",
+    "serve": "npx http-server public -p 8080",
+    "build": "echo 'No build step required for static HTML project'",
+    "test": "echo 'No tests specified'"
+  },
+  "keywords": [
+    "complaint-management",
+    "college",
+    "student-portal",
+    "search",
+    "filter",
+    "crisis-management",
+    "gssoc25"
+  ],
+  "author": "Abhisar Choubey",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/crisisboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/crisisboard/issues"
+  },
+  "homepage": "https://github.com/your-username/crisisboard#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+} 
