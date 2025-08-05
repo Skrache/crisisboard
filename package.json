@@ -1,0 +1,37 @@
+{
+  "name": "crisisboard",
+  "version": "1.0.0",
+  "description": "A web application for college students to submit complaints and issues to authorities with file upload functionality",
+  "main": "public/index.html",
+  "scripts": {
+    "start": "npx http-server public -p 3000 -o",
+    "dev": "npx http-server public -p 3000 -o -c-1",
+    "build": "echo 'Static build - no build process needed'",
+    "test": "echo 'No tests specified'",
+    "lint": "echo 'No linting configured'"
+  },
+  "keywords": [
+    "complaint-system",
+    "file-upload",
+    "college",
+    "student-portal",
+    "crisis-management",
+    "gssoc25"
+  ],
+  "author": "Abhisar Choubey",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/crisisboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/crisisboard/issues"
+  },
+  "homepage": "https://github.com/your-username/crisisboard#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+} 
