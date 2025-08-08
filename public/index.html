@@ -1,873 +1,1057 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CrisisBoard</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-      /* Custom styles for dark mode and theme toggle */
-      .theme-toggle {
-        position: relative;
-        width: 80px;
-        height: 30px;
-        background: #000000;
-        border-radius: 15px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-      
-      .theme-toggle.dark {
-        background: #10b981;
-      }
-      
-      .theme-toggle::before {
-        content: '';
-        position: absolute;
-        top: 2px;
-        left: 2px;
-        width: 26px;
-        height: 26px;
-        background: #000000;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      }
-      
-      .theme-toggle.dark::before {
-        transform: translateX(50px);
-        background: #ffffff;
-      }
-      
-      .theme-toggle::after {
-        content: '☀️';
-        position: absolute;
-        top: 50%;
-        left: 8px;
-        transform: translateY(-50%);
-        font-size: 12px;
-        transition: opacity 0.3s ease;
-      }
-      
-      .theme-toggle.dark::after {
-        content: '🌙';
-        left: auto;
-        right: 8px;
-      }
-      
-      /* Mobile menu toggle */
-      .mobile-menu-toggle {
-        display: none;
-        flex-direction: column;
-        justify-content: space-around;
-        width: 30px;
-        height: 25px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-        z-index: 10;
-      }
-      
-      .mobile-menu-toggle span {
-        width: 100%;
-        height: 3px;
-        background: #374151;
-        border-radius: 2px;
-        transition: all 0.3s ease;
-      }
-      
-      body.dark .mobile-menu-toggle span {
-        background: #f9fafb;
-      }
-      
-      .mobile-menu-toggle.active span:nth-child(1) {
-        transform: rotate(45deg) translate(5px, 5px);
-      }
-      
-      .mobile-menu-toggle.active span:nth-child(2) {
-        opacity: 0;
-      }
-      
-      .mobile-menu-toggle.active span:nth-child(3) {
-        transform: rotate(-45deg) translate(7px, -6px);
-      }
-      
-      /* Mobile close button */
-      .mobile-close-btn {
-        display: none;
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        width: 40px;
-        height: 40px;
-        background: #ef4444;
-        border: none;
-        border-radius: 50%;
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-        z-index: 60;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        transform: scale(0.8);
-        opacity: 0;
-      }
-      
-      .mobile-close-btn:hover {
-        background: #dc2626;
-        transform: scale(1.15) rotate(90deg);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      }
-      
-      .mobile-close-btn:active {
-        transform: scale(0.95) rotate(90deg);
-        transition: all 0.1s ease;
-      }
-      
-      body.dark .mobile-close-btn {
-        background: #dc2626;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-      }
-      
-      body.dark .mobile-close-btn:hover {
-        background: #b91c1c;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
-      }
-      
-      /* Close button animation when sidebar opens */
-      .sidebar.open .mobile-close-btn {
-        transform: scale(1) rotate(0deg);
-        opacity: 1;
-        animation: closeButtonAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      
-      .sidebar.open .mobile-close-btn::after {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        border-radius: 50%;
-        background: rgba(239, 68, 68, 0.2);
-        animation: closeButtonPulse 2s ease-in-out infinite;
-        z-index: -1;
-      }
-      
-      @keyframes closeButtonAppear {
-        0% {
-          transform: scale(0.5) rotate(-180deg);
-          opacity: 0;
-        }
-        50% {
-          transform: scale(1.1) rotate(-90deg);
-          opacity: 0.7;
-        }
-        100% {
-          transform: scale(1) rotate(0deg);
-          opacity: 1;
-        }
-      }
-      
-      @keyframes closeButtonPulse {
-        0%, 100% {
-          transform: scale(1);
-          opacity: 0.3;
-        }
-        50% {
-          transform: scale(1.2);
-          opacity: 0.1;
-        }
-      }
-      
-      /* Responsive sidebar */
-      @media (max-width: 768px) {
-        .sidebar {
-          position: fixed;
-          left: -100%;
-          top: 0;
-          z-index: 50;
-          transition: left 0.3s ease;
-        }
-        
-        .sidebar.open {
-          left: 0;
-        }
-        
-        .mobile-menu-toggle {
-          display: flex;
-        }
-        
-        .mobile-close-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        
-        .main-content {
-          margin-left: 0;
-        }
-      }
-      
-      /* Dark mode styles - Custom implementation for Tailwind v2 */
-      body.dark {
-        background-color: #111827 !important;
-        color: #f9fafb !important;
-      }
-      
-      body.dark .bg-white {
-        background-color: #1f2937 !important;
-      }
-      
-      body.dark .bg-gray-50 {
-        background-color: #111827 !important;
-      }
-      
-      body.dark .bg-gray-100 {
-        background-color: #374151 !important;
-      }
-      
-      body.dark .bg-gray-800 {
-        background-color: #1f2937 !important;
-      }
-      
-      body.dark .bg-gray-900 {
-        background-color: #111827 !important;
-      }
-      
-      body.dark .text-gray-800 {
-        color: #f9fafb !important;
-      }
-      
-      body.dark .text-gray-700 {
-        color: #d1d5db !important;
-      }
-      
-      body.dark .text-gray-600 {
-        color: #9ca3af !important;
-      }
-      
-      body.dark .text-gray-500 {
-        color: #6b7280 !important;
-      }
-      
-      body.dark .text-gray-400 {
-        color: #9ca3af !important;
-      }
-      
-      body.dark .text-gray-300 {
-        color: #d1d5db !important;
-      }
-      
-      body.dark .text-gray-200 {
-        color: #e5e7eb !important;
-      }
-      
-      body.dark .text-gray-100 {
-        color: #f3f4f6 !important;
-      }
-      
-      body.dark .text-white {
-        color: #ffffff !important;
-      }
-      
-      /* Additional text color fixes for better visibility */
-      body.dark .text-gray-900 {
-        color: #f9fafb !important;
-      }
-      
-      body.dark .text-black {
-        color: #ffffff !important;
-      }
-      
-      /* Form input text colors */
-      body.dark input,
-      body.dark textarea,
-      body.dark select {
-        color: #f9fafb !important;
-      }
-      
-      body.dark input::placeholder,
-      body.dark textarea::placeholder {
-        color: #9ca3af !important;
-      }
-      
-      /* Ensure all text elements are visible */
-      body.dark p,
-      body.dark span,
-      body.dark div,
-      body.dark label,
-      body.dark h1,
-      body.dark h2,
-      body.dark h3,
-      body.dark h4,
-      body.dark h5,
-      body.dark h6 {
-        color: inherit;
-      }
-      
-      /* Specific fixes for form elements */
-      body.dark .bg-white input,
-      body.dark .bg-white textarea {
-        color: #f9fafb !important;
-      }
-      
-      body.dark .bg-white input::placeholder,
-      body.dark .bg-white textarea::placeholder {
-        color: #9ca3af !important;
-      }
-      
-      body.dark .border-gray-200 {
-        border-color: #374151 !important;
-      }
-      
-      body.dark .border-gray-300 {
-        border-color: #4b5563 !important;
-      }
-      
-      body.dark .border-gray-600 {
-        border-color: #4b5563 !important;
-      }
-      
-      body.dark .border-gray-700 {
-        border-color: #374151 !important;
-      }
-      
-      body.dark .bg-blue-50 {
-        background-color: rgba(59, 130, 246, 0.1) !important;
-      }
-      
-      body.dark .bg-blue-900\/30 {
-        background-color: rgba(30, 58, 138, 0.3) !important;
-      }
-      
-      body.dark .border-blue-200 {
-        border-color: rgba(59, 130, 246, 0.3) !important;
-      }
-      
-      body.dark .border-blue-700 {
-        border-color: rgba(29, 78, 216, 0.5) !important;
-      }
-      
-      body.dark .text-blue-800 {
-        color: #93c5fd !important;
-      }
-      
-      body.dark .text-blue-200 {
-        color: #93c5fd !important;
-      }
-      
-      body.dark .text-blue-600 {
-        color: #60a5fa !important;
-      }
-      
-      body.dark .text-blue-400 {
-        color: #60a5fa !important;
-      }
-      
-      body.dark .hover\:text-blue-800:hover {
-        color: #93c5fd !important;
-      }
-      
-      body.dark .hover\:text-blue-200:hover {
-        color: #bfdbfe !important;
-      }
-      
-      body.dark .bg-green-50 {
-        background-color: rgba(34, 197, 94, 0.1) !important;
-      }
-      
-      body.dark .bg-green-900\/30 {
-        background-color: rgba(21, 128, 61, 0.3) !important;
-      }
-      
-      body.dark .border-green-200 {
-        border-color: rgba(34, 197, 94, 0.3) !important;
-      }
-      
-      body.dark .border-green-700 {
-        border-color: rgba(21, 128, 61, 0.5) !important;
-      }
-      
-      body.dark .text-green-800 {
-        color: #86efac !important;
-      }
-      
-      body.dark .text-green-200 {
-        color: #86efac !important;
-      }
-      
-      body.dark .text-green-700 {
-        color: #6ee7b7 !important;
-      }
-      
-      body.dark .text-green-300 {
-        color: #6ee7b7 !important;
-      }
-      
-      body.dark .bg-yellow-100 {
-        background-color: rgba(253, 224, 71, 0.2) !important;
-      }
-      
-      body.dark .bg-yellow-900 {
-        background-color: rgba(120, 113, 108, 0.3) !important;
-      }
-      
-      body.dark .text-yellow-800 {
-        color: #fde047 !important;
-      }
-      
-      body.dark .text-yellow-200 {
-        color: #fef3c7 !important;
-      }
-      
-      body.dark .text-green-600 {
-        color: #10b981 !important;
-      }
-      
-      body.dark .text-green-400 {
-        color: #34d399 !important;
-      }
-      
-      body.dark .placeholder-gray-500::placeholder {
-        color: #6b7280 !important;
-      }
-      
-      body.dark .placeholder-gray-400::placeholder {
-        color: #9ca3af !important;
-      }
-      
-      body.dark .focus\:ring-blue-500:focus {
-        --tw-ring-color: #3b82f6 !important;
-      }
-      
-      body.dark .focus\:ring-blue-400:focus {
-        --tw-ring-color: #60a5fa !important;
-      }
-      
-      body.dark .focus\:ring-blue-600:focus {
-        --tw-ring-color: #2563eb !important;
-      }
-      
-      body.dark .ring-offset-gray-800 {
-        --tw-ring-offset-color: #1f2937 !important;
-      }
-      
-      /* Additional dark mode improvements */
-      body.dark .bg-gray-700 {
-        background-color: #374151 !important;
-      }
-      
-      body.dark .bg-gray-600 {
-        background-color: #4b5563 !important;
-      }
-      
-      /* Ensure form elements are properly styled in dark mode */
-      body.dark input[type="checkbox"] {
-        background-color: #374151 !important;
-        border-color: #6b7280 !important;
-      }
-      
-      body.dark input[type="checkbox"]:checked {
-        background-color: #3b82f6 !important;
-        border-color: #3b82f6 !important;
-      }
-      
-      /* Fix for any remaining black text */
-      body.dark * {
-        color-scheme: dark;
-      }
-      
-      /* Dark mode styling for dynamically created items */
-      body.dark .dark-mode-item {
-        background-color: #1f2937 !important;
-        border-color: #374151 !important;
-      }
-      
-      body.dark .dark-mode-item p {
-        color: #f9fafb !important;
-      }
-      
-      body.dark .dark-mode-item .text-gray-500 {
-        color: #9ca3af !important;
-      }
-      
-      /* Smooth transitions for all elements */
-      * {
-        transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-      }
-      
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      
-      ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-      }
-      
-      body.dark ::-webkit-scrollbar-track {
-        background: #374151;
-      }
-      
-      ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 4px;
-      }
-      
-      body.dark ::-webkit-scrollbar-thumb {
-        background: #64748b;
-      }
-      
-      /* Glass morphism effect */
-      .glass {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      
-      body.dark .glass {
-        background: rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-      
-      /* Responsive improvements */
-      @media (max-width: 640px) {
-        .theme-toggle {
-          width: 60px;
-          height: 25px;
-        }
-        
-        .theme-toggle::before {
-          width: 21px;
-          height: 21px;
-        }
-        
-        .theme-toggle.dark::before {
-          transform: translateX(35px);
-        }
-      }
-      
-      /* File upload enhancements */
-      .file-preview-item {
-        position: relative;
-        transition: all 0.2s ease;
-      }
-      
-      .file-preview-item:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      }
-      
-      .file-preview-item .remove-btn {
-        opacity: 0;
-        transition: opacity 0.2s ease;
-      }
-      
-      .file-preview-item:hover .remove-btn {
-        opacity: 1;
-      }
-      
-      .file-preview-item .file-icon {
-        transition: transform 0.2s ease;
-      }
-      
-      .file-preview-item:hover .file-icon {
-        transform: scale(1.1);
-      }
-      
-      /* Drag and drop visual feedback */
-      .drag-over {
-        background-color: rgba(59, 130, 246, 0.1) !important;
-        border-color: #3b82f6 !important;
-        transform: scale(1.02);
-      }
-      
-      body.dark .drag-over {
-        background-color: rgba(59, 130, 246, 0.2) !important;
-      }
-      
-      /* File type icons */
-      .file-type-icon {
-        font-size: 2rem;
-        filter: grayscale(0.3);
-        transition: filter 0.2s ease;
-      }
-      
-      .file-preview-item:hover .file-type-icon {
-        filter: grayscale(0);
-      }
-      
-      /* Progress bar animation */
-      @keyframes progressPulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
-      }
-      
-      .uploading .uploadProgressBar {
-        animation: progressPulse 2s ease-in-out infinite;
-      }
-    </style>
-  </head>
-  <body class="flex flex-col md:flex-row h-screen bg-gray-50 text-gray-900 transition-colors duration-300">
-    
-    <!-- Mobile Header -->
-    <div class="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
-      <h1 class="text-lg font-bold text-gray-800">CrisisBoard</h1>
-      <div class="flex items-center space-x-3">
-        <div class="theme-toggle" id="themeToggleMobile" title="Toggle dark/light mode"></div>
-        <button class="mobile-menu-toggle" id="mobileMenuToggle">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-    </div>
-    
-    <!-- Sidebar -->
-    <aside class="sidebar w-full md:w-64 bg-white shadow-lg p-4 md:p-6 border-r border-gray-200 transition-all duration-300 h-screen md:h-auto relative">
-      <!-- Mobile Close Button -->
-      <button class="mobile-close-btn" id="mobileCloseBtn" title="Close menu">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-      
-      <div class="hidden md:flex items-center justify-between mb-6">
-        <h1 class="text-xl font-bold text-gray-800">CrisisBoard</h1>
-        <!-- Theme Toggle Button -->
-        <div class="theme-toggle" id="themeToggle" title="Toggle dark/light mode"></div>
-      </div>
-      
-      <div class="space-y-4">
-        <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
-          <h3 class="font-semibold text-blue-800 mb-2">Your Complaints</h3>
-          <a href="#" class="text-blue-600 hover:text-blue-800 text-sm transition-colors">Sign in to view complaints</a>
-        </div>
-        
-        <div class="p-3 rounded-lg bg-green-50 border border-green-200">
-          <h3 class="font-semibold text-green-800 mb-2">Quick Stats</h3>
-          <div class="text-sm text-green-700">
-            <div>Resolved: 12</div>
-            <div>Pending: 3</div>
-          </div>
-        </div>
-        <div class="p-3 rounded-lg bg-brown-100 border border-yellow-300 hover:bg-gray-100 transition-colors">
-          <a href="feedback.html" class="flex items-center space-x-2 text-black-700 hover:text-blue-600">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-            </svg>
-            <span>Feedback</span>
-          </a>
-        </div>
-      </div>
-    </aside>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CrisisBoard</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            /* Custom styles for dark mode and theme toggle */
+            .theme-toggle {
+                position: relative;
+                width: 80px;
+                height: 30px;
+                background: #000000;
+                border-radius: 15px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
 
-    <!-- Main Content -->
-    <main class="main-content flex-1 p-4 md:p-6 overflow-y-auto h-screen">
-      <!-- Header with enhanced styling -->
-      <div class="mb-4">
-        <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Welcome to CrisisBoard</h2>
-        <p class="text-gray-600 text-sm">Submit and track community issues efficiently</p>
-      </div>
+            .theme-toggle.dark {
+                background: #10b981;
+            }
 
-      <!-- Enhanced Tabs -->
-      <div class="flex flex-wrap space-x-1 mb-4 p-1 bg-gray-100 rounded-lg w-fit">
-        <button class="px-3 md:px-4 py-2 rounded-md bg-white text-gray-800 font-medium shadow-sm transition-all duration-200 hover:shadow-md text-sm md:text-base">Resolved</button>
-        <button class="px-3 md:px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm md:text-base">Community</button>
-        <button class="px-3 md:px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm md:text-base">Inbox</button>
-      </div>
+            .theme-toggle::before {
+                content: "";
+                position: absolute;
+                top: 2px;
+                left: 2px;
+                width: 26px;
+                height: 26px;
+                background: #000000;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
 
-      <!-- Enhanced Form Section -->
-      <section class="w-full">
-        <div class="bg-white rounded-xl shadow-lg p-4 md:p-5 border border-gray-200">
-          <h3 class="text-xl md:text-2xl font-bold mb-4 text-gray-800">Submit an Issue</h3>
-          <form id="complaintForm" class="space-y-4">
-            <div>
-              <label for="issueText" class="block text-sm font-medium text-gray-700 mb-2">Issue Description</label>
-              <textarea
-                id="issueText"
-                rows="4"
-                placeholder="Describe your issue in detail..."
-                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 resize-none"
-              ></textarea>
-            </div>
-            <!-- Enhanced File Upload Area -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Attach Files (Optional)</label>
-              <div id="fileUploadArea" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-200 hover:border-blue-400 group relative">
-                <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.mp3,.wav,.mp4,.avi,.mov" class="hidden" />
-                <div class="space-y-3">
-                  <div class="text-4xl text-gray-400 group-hover:text-blue-500 transition-colors">
-                    📎
-                  </div>
-                  <div>
-                    <p class="text-gray-600 font-medium">Drag & drop files here, or <span class="text-blue-600 underline cursor-pointer hover:text-blue-800" id="fileInputLabel">browse</span></p>
-                    <p class="text-xs text-gray-400 mt-2">Max 5MB per file, 20MB total</p>
-                    <p class="text-xs text-gray-400">Supported: Images, PDFs, Documents, Audio, Video</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- File Preview Grid -->
-            <div id="filePreviewContainer" class="hidden">
-              <div class="flex items-center justify-between mb-3">
-                <h4 class="text-sm font-medium text-gray-700">Selected Files</h4>
-                <button type="button" id="clearAllFiles" class="text-xs text-red-600 hover:text-red-800 font-medium">Clear All</button>
-              </div>
-              <div id="filePreviewGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-3"></div>
-              <div class="text-xs text-gray-500">
-                <span id="fileCount">0</span> files selected • 
-                <span id="totalSize">0 MB</span> total
-              </div>
-            </div>
-            
-            <!-- Upload Progress -->
-            <div id="uploadProgressContainer" class="w-full mb-3 hidden">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-gray-700">Uploading files...</span>
-                <span id="uploadPercentage" class="text-sm text-gray-500">0%</span>
-              </div>
-              <div class="w-full bg-gray-200 rounded-full h-2.5">
-                <div id="uploadProgressBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out" style="width: 0%"></div>
-              </div>
-              <div id="uploadProgressText" class="text-xs text-gray-500 mt-1 text-center"></div>
-            </div>
-            
-            <div class="flex items-center space-x-3 mb-1">
-              <input 
-                type="checkbox" 
-                id="submitAnonymously" 
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                aria-describedby="privacyBadge"
-              />
-              <label for="submitAnonymously" class="text-sm text-gray-700">Submit Anonymously</label>
-              <div class="relative group" id="privacyTooltipContainer">
-                <button type="button" tabindex="0" aria-label="Privacy info" aria-describedby="privacyTooltip" class="ml-1 align-middle focus:outline-none" id="privacyTooltipBtn">
-                  <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-500 group-focus:text-blue-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                </button>
-                <div id="privacyTooltip" role="tooltip" class="absolute left-1/2 z-10 -translate-x-1/2 mt-2 w-64 rounded-lg bg-white border border-gray-200 shadow-lg p-3 text-xs text-gray-700 opacity-0 pointer-events-none transition-opacity duration-200" aria-live="polite">
-                  When enabled, your name or email won’t be stored or shared. Your identity remains private.
-                </div>
-              </div>
-            </div>
-            <div id="privacyBadgeContainer" class="flex items-center space-x-2 mb-2 opacity-0 pointer-events-none transition-opacity duration-300" aria-live="polite">
-              <span id="privacyBadge" class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-semibold">
-                <svg class="w-4 h-4 mr-1 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10V7a2 2 0 0 0-1.106-1.789l-7-4a2 2 0 0 0-1.788 0l-7 4A2 2 0 0 0 2 7v5c0 5.523 4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
-                Privacy Assured
-              </span>
-            </div>
-            <div id="privacyLiveRegion" class="sr-only" aria-live="polite"></div>
-            
-            <div class="flex items-center space-x-3">
-              <input 
-                type="checkbox" 
-                id="includeEmail" 
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-              />
-              <label for="includeEmail" class="text-sm text-gray-700">Include my email in the report</label>
-            </div>
-            
-            <button
-              type="submit"
-              class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-            >
-              Submit Issue
-            </button>
-            
-            <div id="statusMessage" class="text-center text-sm font-medium"></div>
-          </form>
-        </div>
-      </section>
+            .theme-toggle.dark::before {
+                transform: translateX(50px);
+                background: #ffffff;
+            }
 
-      <!-- Enhanced Complaints List -->
-      <div class="mt-3 w-full">
-        <h3 class="text-base font-semibold mb-1 text-gray-800">Recent Issues</h3>
-        <div id="complaintsList" class="space-y-1"></div>
-      </div>
+            .theme-toggle::after {
+                content: "☀️";
+                position: absolute;
+                top: 50%;
+                left: 8px;
+                transform: translateY(-50%);
+                font-size: 12px;
+                transition: opacity 0.3s ease;
+            }
 
-      <!-- Enhanced Sign-in Button -->
-      <div class="mt-3 w-full">
-        <button
-          id="signInBtn"
-          class="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-8 rounded-lg shadow-lg cursor-not-allowed opacity-75"
-          disabled
+            .theme-toggle.dark::after {
+                content: "🌙";
+                left: auto;
+                right: 8px;
+            }
+
+            /* Mobile menu toggle */
+            .mobile-menu-toggle {
+                display: none;
+                flex-direction: column;
+                justify-content: space-around;
+                width: 30px;
+                height: 25px;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+                z-index: 10;
+            }
+
+            .mobile-menu-toggle span {
+                width: 100%;
+                height: 3px;
+                background: #374151;
+                border-radius: 2px;
+                transition: all 0.3s ease;
+            }
+
+            body.dark .mobile-menu-toggle span {
+                background: #f9fafb;
+            }
+
+            .mobile-menu-toggle.active span:nth-child(1) {
+                transform: rotate(45deg) translate(5px, 5px);
+            }
+
+            .mobile-menu-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .mobile-menu-toggle.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(7px, -6px);
+            }
+
+            /* Mobile close button */
+            .mobile-close-btn {
+                display: none;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                width: 40px;
+                height: 40px;
+                background: #ef4444;
+                border: none;
+                border-radius: 50%;
+                color: white;
+                font-size: 20px;
+                cursor: pointer;
+                z-index: 60;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow:
+                    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            .mobile-close-btn:hover {
+                background: #dc2626;
+                transform: scale(1.15) rotate(90deg);
+                box-shadow:
+                    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+
+            .mobile-close-btn:active {
+                transform: scale(0.95) rotate(90deg);
+                transition: all 0.1s ease;
+            }
+
+            body.dark .mobile-close-btn {
+                background: #dc2626;
+                box-shadow:
+                    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            }
+
+            body.dark .mobile-close-btn:hover {
+                background: #b91c1c;
+                box-shadow:
+                    0 10px 15px -3px rgba(0, 0, 0, 0.4),
+                    0 4px 6px -2px rgba(0, 0, 0, 0.3);
+            }
+
+            /* Close button animation when sidebar opens */
+            .sidebar.open .mobile-close-btn {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+                animation: closeButtonAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .sidebar.open .mobile-close-btn::after {
+                content: "";
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                border-radius: 50%;
+                background: rgba(239, 68, 68, 0.2);
+                animation: closeButtonPulse 2s ease-in-out infinite;
+                z-index: -1;
+            }
+
+            @keyframes closeButtonAppear {
+                0% {
+                    transform: scale(0.5) rotate(-180deg);
+                    opacity: 0;
+                }
+                50% {
+                    transform: scale(1.1) rotate(-90deg);
+                    opacity: 0.7;
+                }
+                100% {
+                    transform: scale(1) rotate(0deg);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes closeButtonPulse {
+                0%,
+                100% {
+                    transform: scale(1);
+                    opacity: 0.3;
+                }
+                50% {
+                    transform: scale(1.2);
+                    opacity: 0.1;
+                }
+            }
+
+            /* Responsive sidebar */
+            @media (max-width: 768px) {
+                .sidebar {
+                    position: fixed;
+                    left: -100%;
+                    top: 0;
+                    z-index: 50;
+                    transition: left 0.3s ease;
+                }
+
+                .sidebar.open {
+                    left: 0;
+                }
+
+                .mobile-menu-toggle {
+                    display: flex;
+                }
+
+                .mobile-close-btn {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .main-content {
+                    margin-left: 0;
+                }
+            }
+
+            /* Dark mode styles - Custom implementation for Tailwind v2 */
+            body.dark {
+                background-color: #111827 !important;
+                color: #f9fafb !important;
+            }
+
+            body.dark .bg-white {
+                background-color: #1f2937 !important;
+            }
+
+            body.dark .bg-gray-50 {
+                background-color: #111827 !important;
+            }
+
+            body.dark .bg-gray-100 {
+                background-color: #374151 !important;
+            }
+
+            body.dark .bg-gray-800 {
+                background-color: #1f2937 !important;
+            }
+
+            body.dark .bg-gray-900 {
+                background-color: #111827 !important;
+            }
+
+            body.dark .text-gray-800 {
+                color: #f9fafb !important;
+            }
+
+            body.dark .text-gray-700 {
+                color: #d1d5db !important;
+            }
+
+            body.dark .text-gray-600 {
+                color: #9ca3af !important;
+            }
+
+            body.dark .text-gray-500 {
+                color: #6b7280 !important;
+            }
+
+            body.dark .text-gray-400 {
+                color: #9ca3af !important;
+            }
+
+            body.dark .text-gray-300 {
+                color: #d1d5db !important;
+            }
+
+            body.dark .text-gray-200 {
+                color: #e5e7eb !important;
+            }
+
+            body.dark .text-gray-100 {
+                color: #f3f4f6 !important;
+            }
+
+            body.dark .text-white {
+                color: #ffffff !important;
+            }
+
+            /* Additional text color fixes for better visibility */
+            body.dark .text-gray-900 {
+                color: #f9fafb !important;
+            }
+
+            body.dark .text-black {
+                color: #ffffff !important;
+            }
+
+            /* Form input text colors */
+            body.dark input,
+            body.dark textarea,
+            body.dark select {
+                color: #f9fafb !important;
+            }
+
+            body.dark input::placeholder,
+            body.dark textarea::placeholder {
+                color: #9ca3af !important;
+            }
+
+            /* Ensure all text elements are visible */
+            body.dark p,
+            body.dark span,
+            body.dark div,
+            body.dark label,
+            body.dark h1,
+            body.dark h2,
+            body.dark h3,
+            body.dark h4,
+            body.dark h5,
+            body.dark h6 {
+                color: inherit;
+            }
+
+            /* Specific fixes for form elements */
+            body.dark .bg-white input,
+            body.dark .bg-white textarea {
+                color: #f9fafb !important;
+            }
+
+            body.dark .bg-white input::placeholder,
+            body.dark .bg-white textarea::placeholder {
+                color: #9ca3af !important;
+            }
+
+            body.dark .border-gray-200 {
+                border-color: #374151 !important;
+            }
+
+            body.dark .border-gray-300 {
+                border-color: #4b5563 !important;
+            }
+
+            body.dark .border-gray-600 {
+                border-color: #4b5563 !important;
+            }
+
+            body.dark .border-gray-700 {
+                border-color: #374151 !important;
+            }
+
+            body.dark .bg-blue-50 {
+                background-color: rgba(59, 130, 246, 0.1) !important;
+            }
+
+            body.dark .bg-blue-900\/30 {
+                background-color: rgba(30, 58, 138, 0.3) !important;
+            }
+
+            body.dark .border-blue-200 {
+                border-color: rgba(59, 130, 246, 0.3) !important;
+            }
+
+            body.dark .border-blue-700 {
+                border-color: rgba(29, 78, 216, 0.5) !important;
+            }
+
+            body.dark .text-blue-800 {
+                color: #93c5fd !important;
+            }
+
+            body.dark .text-blue-200 {
+                color: #93c5fd !important;
+            }
+
+            body.dark .text-blue-600 {
+                color: #60a5fa !important;
+            }
+
+            body.dark .text-blue-400 {
+                color: #60a5fa !important;
+            }
+
+            body.dark .hover\:text-blue-800:hover {
+                color: #93c5fd !important;
+            }
+
+            body.dark .hover\:text-blue-200:hover {
+                color: #bfdbfe !important;
+            }
+
+            body.dark .bg-green-50 {
+                background-color: rgba(34, 197, 94, 0.1) !important;
+            }
+
+            body.dark .bg-green-900\/30 {
+                background-color: rgba(21, 128, 61, 0.3) !important;
+            }
+
+            body.dark .border-green-200 {
+                border-color: rgba(34, 197, 94, 0.3) !important;
+            }
+
+            body.dark .border-green-700 {
+                border-color: rgba(21, 128, 61, 0.5) !important;
+            }
+
+            body.dark .text-green-800 {
+                color: #86efac !important;
+            }
+
+            body.dark .text-green-200 {
+                color: #86efac !important;
+            }
+
+            body.dark .text-green-700 {
+                color: #6ee7b7 !important;
+            }
+
+            body.dark .text-green-300 {
+                color: #6ee7b7 !important;
+            }
+
+            body.dark .bg-yellow-100 {
+                background-color: rgba(253, 224, 71, 0.2) !important;
+            }
+
+            body.dark .bg-yellow-900 {
+                background-color: rgba(120, 113, 108, 0.3) !important;
+            }
+
+            body.dark .text-yellow-800 {
+                color: #fde047 !important;
+            }
+
+            body.dark .text-yellow-200 {
+                color: #fef3c7 !important;
+            }
+
+            body.dark .text-green-600 {
+                color: #10b981 !important;
+            }
+
+            body.dark .text-green-400 {
+                color: #34d399 !important;
+            }
+
+            body.dark .placeholder-gray-500::placeholder {
+                color: #6b7280 !important;
+            }
+
+            body.dark .placeholder-gray-400::placeholder {
+                color: #9ca3af !important;
+            }
+
+            body.dark .focus\:ring-blue-500:focus {
+                --tw-ring-color: #3b82f6 !important;
+            }
+
+            body.dark .focus\:ring-blue-400:focus {
+                --tw-ring-color: #60a5fa !important;
+            }
+
+            body.dark .focus\:ring-blue-600:focus {
+                --tw-ring-color: #2563eb !important;
+            }
+
+            body.dark .ring-offset-gray-800 {
+                --tw-ring-offset-color: #1f2937 !important;
+            }
+
+            /* Additional dark mode improvements */
+            body.dark .bg-gray-700 {
+                background-color: #374151 !important;
+            }
+
+            body.dark .bg-gray-600 {
+                background-color: #4b5563 !important;
+            }
+
+            /* Ensure form elements are properly styled in dark mode */
+            body.dark input[type="checkbox"] {
+                background-color: #374151 !important;
+                border-color: #6b7280 !important;
+            }
+
+            body.dark input[type="checkbox"]:checked {
+                background-color: #3b82f6 !important;
+                border-color: #3b82f6 !important;
+            }
+
+            /* Fix for any remaining black text */
+            body.dark * {
+                color-scheme: dark;
+            }
+
+            /* Dark mode styling for dynamically created items */
+            body.dark .dark-mode-item {
+                background-color: #1f2937 !important;
+                border-color: #374151 !important;
+            }
+
+            body.dark .dark-mode-item p {
+                color: #f9fafb !important;
+            }
+
+            body.dark .dark-mode-item .text-gray-500 {
+                color: #9ca3af !important;
+            }
+
+            /* Smooth transitions for all elements */
+            * {
+                transition:
+                    background-color 0.3s ease,
+                    color 0.3s ease,
+                    border-color 0.3s ease;
+            }
+
+            /* Custom scrollbar */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #f1f5f9;
+            }
+
+            body.dark ::-webkit-scrollbar-track {
+                background: #374151;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 4px;
+            }
+
+            body.dark ::-webkit-scrollbar-thumb {
+                background: #64748b;
+            }
+
+            /* Glass morphism effect */
+            .glass {
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            body.dark .glass {
+                background: rgba(0, 0, 0, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            /* Responsive improvements */
+            @media (max-width: 640px) {
+                .theme-toggle {
+                    width: 60px;
+                    height: 25px;
+                }
+
+                .theme-toggle::before {
+                    width: 21px;
+                    height: 21px;
+                }
+
+                .theme-toggle.dark::before {
+                    transform: translateX(35px);
+                }
+            }
+
+            /* File upload enhancements */
+            .file-preview-item {
+                position: relative;
+                transition: all 0.2s ease;
+            }
+
+            .file-preview-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            .file-preview-item .remove-btn {
+                opacity: 0;
+                transition: opacity 0.2s ease;
+            }
+
+            .file-preview-item:hover .remove-btn {
+                opacity: 1;
+            }
+
+            .file-preview-item .file-icon {
+                transition: transform 0.2s ease;
+            }
+
+            .file-preview-item:hover .file-icon {
+                transform: scale(1.1);
+            }
+
+            /* Drag and drop visual feedback */
+            .drag-over {
+                background-color: rgba(59, 130, 246, 0.1) !important;
+                border-color: #3b82f6 !important;
+                transform: scale(1.02);
+            }
+
+            body.dark .drag-over {
+                background-color: rgba(59, 130, 246, 0.2) !important;
+            }
+
+            /* File type icons */
+            .file-type-icon {
+                font-size: 2rem;
+                filter: grayscale(0.3);
+                transition: filter 0.2s ease;
+            }
+
+            .file-preview-item:hover .file-type-icon {
+                filter: grayscale(0);
+            }
+
+            /* Progress bar animation */
+            @keyframes progressPulse {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.7;
+                }
+            }
+
+            .uploading .uploadProgressBar {
+                animation: progressPulse 2s ease-in-out infinite;
+            }
+        </style>
+    </head>
+    <body
+        class="flex flex-col md:flex-row h-screen bg-gray-50 text-gray-900 transition-colors duration-300"
+    >
+        <!-- Mobile Header -->
+        <div
+            class="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200"
         >
-          <div class="flex items-center justify-center space-x-3">
-            <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-            </svg>
-            <span class="text-base md:text-lg">Sign in with Google (Coming Soon)</span>
-          </div>
-        </button>
-      </div>
-    </main>
+            <h1 class="text-lg font-bold text-gray-800">CrisisBoard</h1>
+            <div class="flex items-center space-x-3">
+                <div
+                    class="theme-toggle"
+                    id="themeToggleMobile"
+                    title="Toggle dark/light mode"
+                ></div>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
 
-    <!-- App Script -->
-    <script src="app.js"></script>
-    
-    <!-- Theme Toggle Script -->
-    <script>
-      // Theme toggle functionality
-      const themeToggle = document.getElementById('themeToggle');
-      const themeToggleMobile = document.getElementById('themeToggleMobile');
-      const body = document.body;
-      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-      const mobileCloseBtn = document.getElementById('mobileCloseBtn');
-      const sidebar = document.querySelector('.sidebar');
-      
-      // Check for saved theme preference or default to light mode
-      const currentTheme = localStorage.getItem('theme') || 'light';
-      body.classList.toggle('dark', currentTheme === 'dark');
-      themeToggle?.classList.toggle('dark', currentTheme === 'dark');
-      themeToggleMobile?.classList.toggle('dark', currentTheme === 'dark');
-      
-      // Theme toggle function
-      function toggleTheme() {
-        const isDark = body.classList.toggle('dark');
-        themeToggle?.classList.toggle('dark', isDark);
-        themeToggleMobile?.classList.toggle('dark', isDark);
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        
-        // Update dynamically created items
-        const darkModeItems = document.querySelectorAll('.dark-mode-item');
-        darkModeItems.forEach(item => {
-          if (isDark) {
-            item.classList.add('dark-mode-item');
-          } else {
-            item.classList.remove('dark-mode-item');
-          }
-        });
-      }
-      
-      // Add event listeners for theme toggles
-      themeToggle?.addEventListener('click', toggleTheme);
-      themeToggleMobile?.addEventListener('click', toggleTheme);
-      
-      // Mobile menu toggle
-      mobileMenuToggle?.addEventListener('click', () => {
-        mobileMenuToggle.classList.toggle('active');
-        sidebar?.classList.toggle('open');
-      });
-      
-      // Mobile close button
-      mobileCloseBtn?.addEventListener('click', () => {
-        mobileMenuToggle?.classList.remove('active');
-        sidebar?.classList.remove('open');
-      });
-      
-      // Close mobile menu when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!sidebar?.contains(e.target) && !mobileMenuToggle?.contains(e.target)) {
-          mobileMenuToggle?.classList.remove('active');
-          sidebar?.classList.remove('open');
-        }
-      });
+        <!-- Sidebar -->
+        <aside
+            class="sidebar w-full md:w-64 bg-white shadow-lg p-4 md:p-6 border-r border-gray-200 transition-all duration-300 h-screen md:h-auto relative"
+        >
+            <!-- Mobile Close Button -->
+            <button
+                class="mobile-close-btn"
+                id="mobileCloseBtn"
+                title="Close menu"
+            >
+                <svg
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M6 18L18 6M6 6l12 12"
+                    ></path>
+                </svg>
+            </button>
 
-      // Form handling is now managed in app.js
-    </script>
-    <script src="app.js"></script>
-  </body>
+            <div class="hidden md:flex items-center justify-between mb-6">
+                <h1 class="text-xl font-bold text-gray-800">CrisisBoard</h1>
+                <!-- Theme Toggle Button -->
+                <div
+                    class="theme-toggle"
+                    id="themeToggle"
+                    title="Toggle dark/light mode"
+                ></div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                    <h3 class="font-semibold text-blue-800 mb-2">
+                        Your Complaints
+                    </h3>
+                    <a
+                        href="#"
+                        class="text-blue-600 hover:text-blue-800 text-sm transition-colors"
+                        >Sign in to view complaints</a
+                    >
+                </div>
+
+                <div class="p-3 rounded-lg bg-green-50 border border-green-200">
+                    <h3 class="font-semibold text-green-800 mb-2">
+                        Quick Stats
+                    </h3>
+                    <div class="text-sm text-green-700">
+                        <div>Resolved: 12</div>
+                        <div>Pending: 3</div>
+                    </div>
+                </div>
+                <div
+                    class="p-3 rounded-lg bg-brown-100 border border-yellow-300 hover:bg-gray-100 transition-colors"
+                >
+                    <a
+                        href="feedback.html"
+                        class="flex items-center space-x-2 text-black-700 hover:text-blue-600"
+                    >
+                        <svg
+                            class="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                            />
+                        </svg>
+                        <span>Feedback</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 p-4 md:p-6 overflow-y-auto h-screen">
+            <!-- Header with enhanced styling -->
+            <div class="mb-4">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                    Welcome to CrisisBoard
+                </h2>
+                <p class="text-gray-600 text-sm">
+                    Submit and track community issues efficiently
+                </p>
+            </div>
+
+            <!-- Enhanced Tabs -->
+            <div
+                class="flex flex-wrap space-x-1 mb-4 p-1 bg-gray-100 rounded-lg w-fit"
+            >
+                <button
+                    class="px-3 md:px-4 py-2 rounded-md bg-white text-gray-800 font-medium shadow-sm transition-all duration-200 hover:shadow-md text-sm md:text-base"
+                >
+                    Resolved
+                </button>
+                <button
+                    class="px-3 md:px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm md:text-base"
+                >
+                    Community
+                </button>
+                <button
+                    class="px-3 md:px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm md:text-base"
+                >
+                    Inbox
+                </button>
+            </div>
+
+            <!-- Enhanced Form Section -->
+            <section class="w-full">
+                <div
+                    class="bg-white rounded-xl shadow-lg p-4 md:p-5 border border-gray-200"
+                >
+                    <h3
+                        class="text-xl md:text-2xl font-bold mb-4 text-gray-800"
+                    >
+                        Submit an Issue
+                    </h3>
+                    <form id="complaintForm" class="space-y-4">
+                        <div>
+                            <label
+                                for="issueText"
+                                class="block text-sm font-medium text-gray-700 mb-2"
+                                >Issue Description</label
+                            >
+                            <textarea
+                                id="issueText"
+                                rows="4"
+                                placeholder="Describe your issue in detail..."
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 resize-none"
+                            ></textarea>
+                        </div>
+                        <!-- Enhanced File Upload Area -->
+                        <div>
+                            <label
+                                class="block text-sm font-medium text-gray-700 mb-2"
+                                >Attach Files (Optional)</label
+                            >
+                            <div
+                                id="fileUploadArea"
+                                class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-200 hover:border-blue-400 group relative"
+                            >
+                                <input
+                                    type="file"
+                                    id="fileInput"
+                                    multiple
+                                    accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.mp3,.wav,.mp4,.avi,.mov"
+                                    class="hidden"
+                                />
+                                <div class="space-y-3">
+                                    <div
+                                        class="text-4xl text-gray-400 group-hover:text-blue-500 transition-colors"
+                                    >
+                                        📎
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-600 font-medium">
+                                            Drag & drop files here, or
+                                            <span
+                                                class="text-blue-600 underline cursor-pointer hover:text-blue-800"
+                                                id="fileInputLabel"
+                                                >browse</span
+                                            >
+                                        </p>
+                                        <p class="text-xs text-gray-400 mt-2">
+                                            Max 5MB per file, 20MB total
+                                        </p>
+                                        <p class="text-xs text-gray-400">
+                                            Supported: Images, PDFs, Documents,
+                                            Audio, Video
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Preview Grid -->
+                        <div id="filePreviewContainer" class="hidden">
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-medium text-gray-700">
+                                    Selected Files
+                                </h4>
+                                <button
+                                    type="button"
+                                    id="clearAllFiles"
+                                    class="text-xs text-red-600 hover:text-red-800 font-medium"
+                                >
+                                    Clear All
+                                </button>
+                            </div>
+                            <div
+                                id="filePreviewGrid"
+                                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-3"
+                            ></div>
+                            <div class="text-xs text-gray-500">
+                                <span id="fileCount">0</span> files selected •
+                                <span id="totalSize">0 MB</span> total
+                            </div>
+                        </div>
+
+                        <!-- Upload Progress -->
+                        <div
+                            id="uploadProgressContainer"
+                            class="w-full mb-3 hidden"
+                        >
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-medium text-gray-700"
+                                    >Uploading files...</span
+                                >
+                                <span
+                                    id="uploadPercentage"
+                                    class="text-sm text-gray-500"
+                                    >0%</span
+                                >
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div
+                                    id="uploadProgressBar"
+                                    class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
+                                    style="width: 0%"
+                                ></div>
+                            </div>
+                            <div
+                                id="uploadProgressText"
+                                class="text-xs text-gray-500 mt-1 text-center"
+                            ></div>
+                        </div>
+
+                        <div
+                            id="privacyBadgeContainer"
+                            class="flex items-center space-x-2 mb-2 opacity-0 pointer-events-none transition-opacity duration-300"
+                            aria-live="polite"
+                        >
+                            <span
+                                id="privacyBadge"
+                                class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-semibold"
+                            >
+                                <svg
+                                    class="w-4 h-4 mr-1 text-green-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        d="M12 22c5.523 0 10-4.477 10-10V7a2 2 0 0 0-1.106-1.789l-7-4a2 2 0 0 0-1.788 0l-7 4A2 2 0 0 0 2 7v5c0 5.523 4.477 10 10 10z"
+                                    />
+                                    <path d="M9 12l2 2 4-4" />
+                                </svg>
+                                Privacy Assured
+                            </span>
+                        </div>
+                        <div
+                            id="privacyLiveRegion"
+                            class="sr-only"
+                            aria-live="polite"
+                        ></div>
+
+                        <div class="flex items-center space-x-3">
+                            <input
+                                type="checkbox"
+                                id="includeEmail"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            />
+                            <label
+                                for="includeEmail"
+                                class="text-sm text-gray-700"
+                                >Include my email in the report</label
+                            >
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                        >
+                            Submit Issue
+                        </button>
+
+                        <div
+                            id="statusMessage"
+                            class="text-center text-sm font-medium"
+                        ></div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Enhanced Complaints List -->
+            <div class="mt-3 w-full">
+                <h3 class="text-base font-semibold mb-1 text-gray-800">
+                    Recent Issues
+                </h3>
+                <div id="complaintsList" class="space-y-1"></div>
+            </div>
+
+            <!-- Enhanced Sign-in Button -->
+            <div class="mt-3 w-full">
+                <button
+                    id="signInBtn"
+                    class="w-full bg-gradient-to-r from-gray-600 to-gray-700 text-white py-3 px-8 rounded-lg shadow-lg cursor-not-allowed opacity-75"
+                    disabled
+                >
+                    <div class="flex items-center justify-center space-x-3">
+                        <svg
+                            class="w-5 h-5 md:w-6 md:h-6"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                clip-rule="evenodd"
+                            ></path>
+                        </svg>
+                        <span class="text-base md:text-lg"
+                            >Sign in with Google (Coming Soon)</span
+                        >
+                    </div>
+                </button>
+            </div>
+        </main>
+
+        <!-- App Script -->
+        <script src="app.js"></script>
+
+        <!-- Theme Toggle Script -->
+        <script>
+            // Theme toggle functionality
+            const themeToggle = document.getElementById("themeToggle");
+            const themeToggleMobile =
+                document.getElementById("themeToggleMobile");
+            const body = document.body;
+            const mobileMenuToggle =
+                document.getElementById("mobileMenuToggle");
+            const mobileCloseBtn = document.getElementById("mobileCloseBtn");
+            const sidebar = document.querySelector(".sidebar");
+
+            // Check for saved theme preference or default to light mode
+            const currentTheme = localStorage.getItem("theme") || "light";
+            body.classList.toggle("dark", currentTheme === "dark");
+            themeToggle?.classList.toggle("dark", currentTheme === "dark");
+            themeToggleMobile?.classList.toggle(
+                "dark",
+                currentTheme === "dark",
+            );
+
+            // Theme toggle function
+            function toggleTheme() {
+                const isDark = body.classList.toggle("dark");
+                themeToggle?.classList.toggle("dark", isDark);
+                themeToggleMobile?.classList.toggle("dark", isDark);
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+
+                // Update dynamically created items
+                const darkModeItems =
+                    document.querySelectorAll(".dark-mode-item");
+                darkModeItems.forEach((item) => {
+                    if (isDark) {
+                        item.classList.add("dark-mode-item");
+                    } else {
+                        item.classList.remove("dark-mode-item");
+                    }
+                });
+            }
+
+            // Add event listeners for theme toggles
+            themeToggle?.addEventListener("click", toggleTheme);
+            themeToggleMobile?.addEventListener("click", toggleTheme);
+
+            // Mobile menu toggle
+            mobileMenuToggle?.addEventListener("click", () => {
+                mobileMenuToggle.classList.toggle("active");
+                sidebar?.classList.toggle("open");
+            });
+
+            // Mobile close button
+            mobileCloseBtn?.addEventListener("click", () => {
+                mobileMenuToggle?.classList.remove("active");
+                sidebar?.classList.remove("open");
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener("click", (e) => {
+                if (
+                    !sidebar?.contains(e.target) &&
+                    !mobileMenuToggle?.contains(e.target)
+                ) {
+                    mobileMenuToggle?.classList.remove("active");
+                    sidebar?.classList.remove("open");
+                }
+            });
+
+            // Form handling is now managed in app.js
+        </script>
+        <script src="app.js"></script>
+    </body>
 </html>
