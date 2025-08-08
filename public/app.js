@@ -8,6 +8,11 @@ const issueText = document.getElementById("issueText");
 const includeEmailCb = document.getElementById("includeEmail");
 const statusMsg = document.getElementById("statusMessage");
 const complaintsList = document.getElementById("complaintsList");
+const submitAnonymouslyCb = document.getElementById("submitAnonymously");
+const privacyTooltipBtn = document.getElementById("privacyTooltipBtn");
+const privacyTooltip = document.getElementById("privacyTooltip");
+const privacyBadgeContainer = document.getElementById("privacyBadgeContainer");
+const privacyLiveRegion = document.getElementById("privacyLiveRegion");
 
 // File upload elements
 const fileInput = document.getElementById('fileInput');
@@ -86,7 +91,62 @@ function validateFile(file) {
   
   return errors;
 }
+// Tooltip show/hide logic
+function showTooltip() {
+  privacyTooltip.classList.add("opacity-100", "pointer-events-auto");
+  privacyTooltip.classList.remove("opacity-0", "pointer-events-none");
+}
+function hideTooltip() {
+  privacyTooltip.classList.remove("opacity-100", "pointer-events-auto");
+  privacyTooltip.classList.add("opacity-0", "pointer-events-none");
+}
+privacyTooltipBtn.addEventListener("mouseenter", showTooltip);
+privacyTooltipBtn.addEventListener("focus", showTooltip);
+privacyTooltipBtn.addEventListener("mouseleave", hideTooltip);
+privacyTooltipBtn.addEventListener("blur", hideTooltip);
 
+// Badge show/hide logic
+function updatePrivacyBadge() {
+  if (submitAnonymouslyCb.checked) {
+    privacyBadgeContainer.classList.add("opacity-100", "pointer-events-auto");
+    privacyBadgeContainer.classList.remove("opacity-0", "pointer-events-none");
+    privacyLiveRegion.textContent = "Privacy Assured: Your identity is private.";
+  } else {
+    privacyBadgeContainer.classList.remove("opacity-100", "pointer-events-auto");
+    privacyBadgeContainer.classList.add("opacity-0", "pointer-events-none");
+    privacyLiveRegion.textContent = "";
+  }
+}
+submitAnonymouslyCb.addEventListener("change", updatePrivacyBadge);
+document.addEventListener("DOMContentLoaded", updatePrivacyBadge);
+
+// Mutual exclusivity logic
+submitAnonymouslyCb.addEventListener("change", () => {
+  if (submitAnonymouslyCb.checked) {
+    includeEmailCb.checked = false;
+    includeEmailCb.disabled = true;
+    privacyLiveRegion.textContent = "Anonymous mode enabled. Your identity will not be stored.";
+  } else {
+    includeEmailCb.disabled = false;
+    privacyLiveRegion.textContent = "";
+  }
+  updatePrivacyBadge();
+});
+includeEmailCb.addEventListener("change", () => {
+  if (includeEmailCb.checked) {
+    submitAnonymouslyCb.checked = false;
+    submitAnonymouslyCb.disabled = true;
+    privacyLiveRegion.textContent = "Email mode enabled. Your email will be included.";
+  } else {
+    submitAnonymouslyCb.disabled = false;
+    privacyLiveRegion.textContent = "";
+  }
+  updatePrivacyBadge();
+});
+
+/*  Submit complaint (dummy logic, replace with Gemini/your backend later)  */
+complaintForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 function validateTotalSize(newFiles) {
   const currentTotal = selectedFiles.reduce((sum, f) => sum + f.size, 0);
   const newTotal = newFiles.reduce((sum, f) => sum + f.size, 0);
@@ -134,7 +194,14 @@ function showNotification(message, type = 'info') {
     setTimeout(() => notification.remove(), 300);
   }, 5000);
 }
-
+  let email;
+  if (submitAnonymouslyCb.checked) {
+    email = "anonymous";
+  } else if (includeEmailCb.checked) {
+    email = "user@example.com";
+  } else {
+    email = "not provided";
+  }
 /*  File Preview Management  */
 function updateFilePreview() {
   filePreviewGrid.innerHTML = '';
@@ -253,6 +320,17 @@ function processFiles(files) {
   // Show errors if any
   if (errors.length > 0) {
     errors.forEach(error => showNotification(error, 'error'));
+    issueText.value = "";
+    includeEmailCb.checked = false;
+    submitAnonymouslyCb.checked = false;
+    includeEmailCb.disabled = false;
+    submitAnonymouslyCb.disabled = false;
+    privacyLiveRegion.textContent = "";
+    updatePrivacyBadge();
+    statusMsg.textContent = "✅ Complaint submitted!";
+    setTimeout(() => statusMsg.textContent = "", 2500);
+  } catch (err) {
+    alert("Submission failed: " + err.message);
   }
   
   // Add valid files
