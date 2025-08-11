@@ -202,6 +202,8 @@ function showNotification(message, type = 'info') {
   } else {
     email = "not provided";
   }
+});
+
 /*  File Preview Management  */
 function updateFilePreview() {
   filePreviewGrid.innerHTML = '';
@@ -318,7 +320,7 @@ function processFiles(files) {
   });
   
   // Show errors if any
-  if (errors.length > 0) {
+  try{if (errors.length > 0) {
     errors.forEach(error => showNotification(error, 'error'));
     issueText.value = "";
     includeEmailCb.checked = false;
@@ -329,7 +331,7 @@ function processFiles(files) {
     updatePrivacyBadge();
     statusMsg.textContent = "✅ Complaint submitted!";
     setTimeout(() => statusMsg.textContent = "", 2500);
-  } catch (err) {
+  }} catch (err) {
     alert("Submission failed: " + err.message);
   }
   
@@ -340,7 +342,16 @@ function processFiles(files) {
     showNotification(`${validFiles.length} file(s) added successfully`, 'success');
   }
 }
-
+try {
+  // Add valid files
+  if (validFiles.length > 0) {
+    selectedFiles.push(...validFiles);
+    updateFilePreview();
+    showNotification(`${validFiles.length} file(s) added successfully`, 'success');
+  }
+} catch (err) {
+  showNotification('Error adding files: ' + err.message, 'error');
+}
 /*  Drag and Drop Handlers  */
 function handleDragOver(e) {
   e.preventDefault();
