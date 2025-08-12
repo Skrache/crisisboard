@@ -1,7 +1,7 @@
 /*  public/app.js - Enhanced File Upload Implementation  */
 
 /*  DOM refs  */
-const signInBtn = document.getElementById("signInBtn");
+let signInBtn;
 const userEmailLbl = document.getElementById("userEmail");
 const complaintForm = document.getElementById("complaintForm");
 const issueText = document.getElementById("issueText");
@@ -71,6 +71,54 @@ function getFileIcon(file) {
   return fileTypeIcons[file.type] || fileTypeIcons.default;
 }
 
+function validateTotalSize(newFiles) {
+  const currentTotal = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+  const newTotal = newFiles.reduce((sum, f) => sum + f.size, 0);
+  
+  if (currentTotal + newTotal > maxTotalSize) {
+    return `Total file size limit exceeded. Current: ${formatFileSize(currentTotal)}, Adding: ${formatFileSize(newTotal)}, Limit: ${formatFileSize(maxTotalSize)}`;
+  }
+  
+  if (selectedFiles.length + newFiles.length > maxFiles) {
+    return `Maximum ${maxFiles} files allowed. Current: ${selectedFiles.length}, Adding: ${newFiles.length}`;
+  }
+  
+  return null;
+}
+
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm transition-all duration-300 transform translate-x-full`;
+  
+  const colors = {
+    success: 'bg-green-500 text-white',
+    error: 'bg-red-500 text-white',
+    warning: 'bg-yellow-500 text-white',
+    info: 'bg-blue-500 text-white'
+  };
+  
+  notification.className += ` ${colors[type]}`;
+  notification.innerHTML = `
+    <div class="flex items-center justify-between">
+      <span>${message}</span>
+      <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-white hover:text-gray-200">✕</button>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Animate in
+  setTimeout(() => {
+    notification.classList.remove('translate-x-full');
+  }, 100);
+  
+  // Auto remove after 5 seconds
+  setTimeout(() => {
+    notification.classList.add('translate-x-full');
+    setTimeout(() => notification.remove(), 300);
+  }, 5000);
+}
+
 function validateFile(file) {
   const errors = [];
   
@@ -119,90 +167,6 @@ function updatePrivacyBadge() {
 }
 submitAnonymouslyCb.addEventListener("change", updatePrivacyBadge);
 document.addEventListener("DOMContentLoaded", updatePrivacyBadge);
-
-// Mutual exclusivity logic
-submitAnonymouslyCb.addEventListener("change", () => {
-  if (submitAnonymouslyCb.checked) {
-    includeEmailCb.checked = false;
-    includeEmailCb.disabled = true;
-    privacyLiveRegion.textContent = "Anonymous mode enabled. Your identity will not be stored.";
-  } else {
-    includeEmailCb.disabled = false;
-    privacyLiveRegion.textContent = "";
-  }
-  updatePrivacyBadge();
-});
-includeEmailCb.addEventListener("change", () => {
-  if (includeEmailCb.checked) {
-    submitAnonymouslyCb.checked = false;
-    submitAnonymouslyCb.disabled = true;
-    privacyLiveRegion.textContent = "Email mode enabled. Your email will be included.";
-  } else {
-    submitAnonymouslyCb.disabled = false;
-    privacyLiveRegion.textContent = "";
-  }
-  updatePrivacyBadge();
-});
-
-/*  Submit complaint (dummy logic, replace with Gemini/your backend later)  */
-complaintForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-function validateTotalSize(newFiles) {
-  const currentTotal = selectedFiles.reduce((sum, f) => sum + f.size, 0);
-  const newTotal = newFiles.reduce((sum, f) => sum + f.size, 0);
-  
-  if (currentTotal + newTotal > maxTotalSize) {
-    return `Total file size limit exceeded. Current: ${formatFileSize(currentTotal)}, Adding: ${formatFileSize(newTotal)}, Limit: ${formatFileSize(maxTotalSize)}`;
-  }
-  
-  if (selectedFiles.length + newFiles.length > maxFiles) {
-    return `Maximum ${maxFiles} files allowed. Current: ${selectedFiles.length}, Adding: ${newFiles.length}`;
-  }
-  
-  return null;
-}
-
-function showNotification(message, type = 'info') {
-  const notification = document.createElement('div');
-  notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-sm transition-all duration-300 transform translate-x-full`;
-  
-  const colors = {
-    success: 'bg-green-500 text-white',
-    error: 'bg-red-500 text-white',
-    warning: 'bg-yellow-500 text-white',
-    info: 'bg-blue-500 text-white'
-  };
-  
-  notification.className += ` ${colors[type]}`;
-  notification.innerHTML = `
-    <div class="flex items-center justify-between">
-      <span>${message}</span>
-      <button onclick="this.parentElement.parentElement.remove()" class="ml-3 text-white hover:text-gray-200">✕</button>
-    </div>
-  `;
-  
-  document.body.appendChild(notification);
-  
-  // Animate in
-  setTimeout(() => {
-    notification.classList.remove('translate-x-full');
-  }, 100);
-  
-  // Auto remove after 5 seconds
-  setTimeout(() => {
-    notification.classList.add('translate-x-full');
-    setTimeout(() => notification.remove(), 300);
-  }, 5000);
-}
-  let email;
-  if (submitAnonymouslyCb.checked) {
-    email = "anonymous";
-  } else if (includeEmailCb.checked) {
-    email = "user@example.com";
-  } else {
-    email = "not provided";
-  }
-});
 
 /*  File Preview Management  */
 function updateFilePreview() {
@@ -320,19 +284,9 @@ function processFiles(files) {
   });
   
   // Show errors if any
-  try{if (errors.length > 0) {
+  if (errors.length > 0) {
     errors.forEach(error => showNotification(error, 'error'));
-    issueText.value = "";
-    includeEmailCb.checked = false;
-    submitAnonymouslyCb.checked = false;
-    includeEmailCb.disabled = false;
-    submitAnonymouslyCb.disabled = false;
-    privacyLiveRegion.textContent = "";
-    updatePrivacyBadge();
-    statusMsg.textContent = "✅ Complaint submitted!";
-    setTimeout(() => statusMsg.textContent = "", 2500);
-  }} catch (err) {
-    alert("Submission failed: " + err.message);
+    return;
   }
   
   // Add valid files
@@ -341,16 +295,6 @@ function processFiles(files) {
     updateFilePreview();
     showNotification(`${validFiles.length} file(s) added successfully`, 'success');
   }
-}
-try {
-  // Add valid files
-  if (validFiles.length > 0) {
-    selectedFiles.push(...validFiles);
-    updateFilePreview();
-    showNotification(`${validFiles.length} file(s) added successfully`, 'success');
-  }
-} catch (err) {
-  showNotification('Error adding files: ' + err.message, 'error');
 }
 /*  Drag and Drop Handlers  */
 function handleDragOver(e) {
@@ -423,6 +367,9 @@ async function simulateFileUpload() {
 
 /*  Event Listeners  */
 document.addEventListener('DOMContentLoaded', function() {
+  // Initialize DOM elements after DOM is loaded
+  signInBtn = document.getElementById("signInBtn");
+  
   // File input change
   fileInput.addEventListener('change', (e) => {
     if (e.target.files.length > 0) {
@@ -459,6 +406,31 @@ document.addEventListener('DOMContentLoaded', function() {
     showNotification("Sign-in functionality is not implemented yet.", "info");
   });
   
+  // Mutual exclusivity logic
+  submitAnonymouslyCb.addEventListener("change", () => {
+    if (submitAnonymouslyCb.checked) {
+      includeEmailCb.checked = false;
+      includeEmailCb.disabled = true;
+      privacyLiveRegion.textContent = "Anonymous mode enabled. Your identity will not be stored.";
+    } else {
+      includeEmailCb.disabled = false;
+      privacyLiveRegion.textContent = "";
+    }
+    updatePrivacyBadge();
+  });
+  
+  includeEmailCb.addEventListener("change", () => {
+    if (includeEmailCb.checked) {
+      submitAnonymouslyCb.checked = false;
+      submitAnonymouslyCb.disabled = true;
+      privacyLiveRegion.textContent = "Email mode enabled. Your email will be included.";
+    } else {
+      submitAnonymouslyCb.disabled = false;
+      privacyLiveRegion.textContent = "";
+    }
+    updatePrivacyBadge();
+  });
+  
   // Form submission
   complaintForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -477,12 +449,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const email = includeEmailCb.checked ? "user@example.com" : "anonymous";
     
     try {
-      // Simulate file upload if files are selected
       if (selectedFiles.length > 0) {
         await simulateFileUpload();
       }
       
-      // TODO: Replace this with actual backend integration
       console.log("Submitting complaint:", { 
         text, 
         email, 
