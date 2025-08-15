@@ -10,7 +10,12 @@
             href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
             rel="stylesheet"
         />
-        <style>
+        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+          <style>
+        
+    
             /* Custom styles for dark mode and theme toggle */
             .theme-toggle {
                 position: relative;
@@ -635,6 +640,8 @@
     <body
         class="flex flex-col md:flex-row h-screen bg-gray-50 text-gray-900 transition-colors duration-300"
     >
+    <div id="complaintStatus"></div>
+
         <!-- Mobile Header -->
         <div
             class="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200"
@@ -1089,6 +1096,27 @@
         </script>
         <script src="app.js"></script>
 
+        
+         <div id="root"></div>
+
+    <!-- ComplaintStatus component -->
+    <script type="text/babel" src="./components/ComplaintStatus.jsx"></script>
+
+    <!-- App.jsx -->
+    <script type="text/babel">
+      function App() {
+        return <ComplaintStatus />;
+      }
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+      </script>
+        <!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firebase.js"></script>
+<script src="firebase.js"></script>
+<script type="text/babel" src="complaintStatus.jsx"></script>
+
+
+
         <script type="module">
                     import { auth, provider, signInWithPopup, signOut, onAuthStateChanged } from './firebase-config.js';
                     onAuthStateChanged(auth, (user) => {
@@ -1115,5 +1143,6 @@
                     });
 
                 </script>
+
     </body>
 </html>
