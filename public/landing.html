@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrisisBoard - Submit and Track Community Issues Efficiently</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .interactive-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-100px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(-10px) rotate(-1deg); }
+        }
+        
+        .hero-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: patternMove 20s ease-in-out infinite;
+        }
+        
+        @keyframes patternMove {
+            0%, 100% { transform: translateX(0%) translateY(0%); }
+            50% { transform: translateX(5%) translateY(-5%); }
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        .card-hover:hover::before {
+            left: 100%;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transition: all 0.6s ease;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        }
+        
+        .stats-counter {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .interactive-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .step-icon {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+        
+        .step-icon::before {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            background: radial-gradient(circle, transparent 60%, rgba(59, 130, 246, 0.1) 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+        
+        .step-icon:hover::before {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+        
+        .step-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .parallax-element {
+            transition: transform 0.1s ease-out;
+        }
+        
+        .typing-animation {
+            overflow: hidden;
+            border-right: 2px solid #3b82f6;
+            white-space: nowrap;
+            animation: typing 3s steps(30) 1s forwards, blink 1s infinite;
+            width: 0;
+        }
+        
+        @keyframes typing {
+            to { width: 100%; }
+        }
+        
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+        
+        .feature-highlight {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-highlight::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .feature-highlight:hover::after {
+            opacity: 1;
+        }
+        
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        body.loaded {
+            opacity: 1;
+        }
+        
+        body {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .typing-animation {
+                animation: none;
+                border: none;
+                white-space: normal;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 overflow-x-hidden">
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-lg shadow-sm fixed w-full top-0 z-50 border-b border-gray-200/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">CrisisBoard</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="nav-link text-gray-600 hover:text-blue-600 font-medium">Features</a>
+                    <a href="#how-it-works" class="nav-link text-gray-600 hover:text-blue-600 font-medium">How it Works</a>
+                    <a href="#stats" class="nav-link text-gray-600 hover:text-blue-600 font-medium">Impact</a>
+                    <button onclick="window.open('index.html', '_self')" class="btn-primary text-white px-8 py-3 rounded-xl font-semibold shadow-lg">
+                        <span class="relative z-10">Get Started</span>
+                    </button>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden fixed top-0 right-0 h-full w-64 bg-white shadow-2xl">
+            <div class="p-6">
+                <button id="close-menu" class="absolute top-4 right-4 text-gray-600 hover:text-gray-800">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                <div class="mt-8 space-y-4">
+                    <a href="#features" class="block text-gray-600 hover:text-blue-600 font-medium py-2">Features</a>
+                    <a href="#how-it-works" class="block text-gray-600 hover:text-blue-600 font-medium py-2">How it Works</a>
+                    <a href="#stats" class="block text-gray-600 hover:text-blue-600 font-medium py-2">Impact</a>
+                    <button onclick="window.open('index.html', '_self')" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold w-full mt-4">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-24 pb-20 overflow-hidden min-h-screen flex items-center">
+        <div class="hero-pattern absolute inset-0"></div>
+        <div class="interactive-gradient absolute inset-0 opacity-5"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="text-center">
+                <div class="slide-in-left">
+                    <div class="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-6 animate-pulse">
+                         Transforming Communities Since 2024
+                    </div>
+                    <h1 class="text-6xl md:text-7xl font-black text-gray-900 mb-8 leading-tight">
+                        Transform Your Community with
+                        <span class="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent typing-animation block mt-2">
+                            CrisisBoard
+                        </span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+                        Submit and track community issues efficiently. From trash piles to infrastructure problems, 
+                        CrisisBoard connects citizens with the right authorities for swift resolution.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                        <button onclick="window.open('index.html', '_self')" class="btn-primary text-white px-12 py-5 rounded-2xl font-bold text-xl shadow-2xl group">
+                            <span class="relative z-10 flex items-center">
+                                Start Reporting Issues
+                                <svg class="w-6 h-6 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                                </svg>
+                            </span>
+                        </button>
+                        <button class="glass-effect text-gray-700 px-12 py-5 rounded-2xl font-bold text-xl hover:bg-white/20 transition-all group">
+                            <span class="flex items-center">
+                                <svg class="w-6 h-6 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Watch Demo
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mt-20 slide-in-right">
+    <div class="interactive-card rounded-3xl shadow-2xl p-10 max-w-5xl mx-auto border-2 border-gray-200/20">
+        <div class="grid md:grid-cols-3 gap-12 text-center">
+            <div class="feature-highlight rounded-2xl p-6 hover:bg-blue-50/50 transition-all cursor-pointer">
+                <div class="text-5xl font-black text-blue-600 stats-counter mb-3" data-target="1250">0</div>
+                <div class="text-gray-600 font-medium text-lg">Issues Resolved</div>
+                <div class="w-20 h-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full mx-auto mt-3"></div>
+            </div>
+            <div class="feature-highlight rounded-2xl p-6 hover:bg-green-50/50 transition-all cursor-pointer">
+                <div class="text-5xl font-black text-green-600 stats-counter mb-3" data-target="48">0</div>
+                <div class="text-gray-600 font-medium text-lg">Hours Avg Response</div>
+                <div class="w-20 h-1 bg-gradient-to-r from-green-400 to-green-600 rounded-full mx-auto mt-3"></div>
+            </div>
+            <div class="feature-highlight rounded-2xl p-6 hover:bg-purple-50/50 transition-all cursor-pointer">
+                <div class="text-5xl font-black text-purple-600 stats-counter mb-3" data-target="95">0</div>
+                <div class="text-gray-600 font-medium text-lg">% Success Rate</div>
+                <div class="w-20 h-1 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full mx-auto mt-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-purple-50/30"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="text-center mb-20 fade-in">
+                <h2 class="text-5xl md:text-6xl font-black text-gray-900 mb-6">Why Choose CrisisBoard?</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Streamlined issue reporting that connects communities with solutions through cutting-edge technology
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-3 gap-10">
+                <div class="scale-in card-hover interactive-card rounded-3xl p-10 text-center border-2 border-gray-100">
+                    <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Smart AI Categorization</h3>
+                    <p class="text-gray-600 leading-relaxed text-lg">
+                        Our advanced AI system automatically categorizes your issues and intelligently routes them to the appropriate authorities for lightning-fast resolution.
+                    </p>
+                </div>
+                
+                <div class="scale-in card-hover interactive-card rounded-3xl p-10 text-center border-2 border-gray-100">
+                    <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M12 12v7"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Direct Authority Pipeline</h3>
+                    <p class="text-gray-600 leading-relaxed text-lg">
+                        Issues are instantly delivered via email to the relevant authorities through our verified network, ensuring your concerns reach decision-makers immediately.
+                    </p>
+                </div>
+                
+                <div class="scale-in card-hover interactive-card rounded-3xl p-10 text-center border-2 border-gray-100">
+                    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Real-time Tracking</h3>
+                    <p class="text-gray-600 leading-relaxed text-lg">
+                        Monitor your issue's journey from submission to resolution with live updates, transparent communication, and detailed progress tracking.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works Section -->
+    <section id="how-it-works" class="py-24 bg-gradient-to-br from-gray-50 to-blue-50/30 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20 fade-in">
+                <h2 class="text-5xl md:text-6xl font-black text-gray-900 mb-6">How CrisisBoard Works</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Simple, efficient, and effective - reporting community issues has never been this seamless
+                </p>
+            </div>
+            
+            <div class="grid lg:grid-cols-4 gap-8 relative">
+                <!-- Connecting Lines -->
+                <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 via-green-400 via-purple-400 to-orange-400 opacity-20 -translate-y-1/2"></div>
+                
+                <div class="fade-in text-center relative">
+                    <div class="step-icon w-28 h-28 bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
+                        <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Submit Issue</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Describe your community issue in detail using our intuitive, user-friendly submission form with rich media support.
+                    </p>
+                </div>
+                
+                <div class="fade-in text-center relative">
+                    <div class="step-icon w-28 h-28 bg-gradient-to-br from-green-500 to-green-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
+                        <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">AI Auto-Categorize</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Our intelligent AI system analyzes and categorizes your issue, then identifies the most appropriate authority to handle it efficiently.
+                    </p>
+                </div>
+                
+                <div class="fade-in text-center relative">
+                    <div class="step-icon w-28 h-28 bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
+                        <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Instant Notification</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        The relevant authority receives an instant, detailed email notification with all pertinent information and context about your issue.
+                    </p>
+                </div>
+                
+                <div class="fade-in text-center relative">
+                    <div class="step-icon w-28 h-28 bg-gradient-to-br from-orange-500 to-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
+                        <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Track & Resolve</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Monitor your issue's complete journey with real-time updates, progress tracking, and transparent communication until full resolution.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Demo Section -->
+    <section class="py-24 bg-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in">
+                <div class="inline-block px-6 py-3 bg-green-100 text-green-600 rounded-full text-sm font-bold mb-6">
+                     INTERACTIVE PREVIEW
+                </div>
+                <h2 class="text-5xl md:text-6xl font-black text-gray-900 mb-6">See It In Action</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Experience the power of CrisisBoard with our interactive preview
+                </p>
+            </div>
+
+            <div class="fade-in">
+                <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 shadow-2xl max-w-5xl mx-auto">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-3 h-3 bg-red-400 rounded-full"></div>
+                        <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                        <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                        <div class="flex-1 bg-gray-700 rounded-full px-4 py-2 text-gray-300 text-sm font-mono text-center">
+                            crisisboard.app
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-2xl p-8 shadow-inner">
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 mb-4">Submit Your First Issue</h3>
+                                <div class="space-y-4">
+                                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <div class="text-sm text-gray-600 mb-1">Issue Type</div>
+                                        <div class="font-semibold text-gray-900">Infrastructure Problem</div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-green-500">
+                                        <div class="text-sm text-gray-600 mb-1">Location</div>
+                                        <div class="font-semibold text-gray-900">Downtown Park Area</div>
+                                    </div>
+                                    <div class="bg-gray-50 rounded-lg p-4 border-l-4 border-purple-500">
+                                        <div class="text-sm text-gray-600 mb-1">Status</div>
+                                        <div class="font-semibold text-green-600 flex items-center">
+                                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                            Processing...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button onclick="window.open('index.html', '_self')" class="btn-primary text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg group">
+                                    <span class="relative z-10 flex items-center justify-center">
+                                        Try It Now
+                                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 interactive-gradient relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/20"></div>
+        <div class="absolute inset-0">
+            <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-300/20 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+            <div class="fade-in">
+                <div class="inline-block px-6 py-3 glass-effect text-white rounded-full text-sm font-bold mb-8">
+                     JOIN THE MOVEMENT!
+                </div>
+                <h2 class="text-5xl md:text-6xl font-black text-white mb-8 leading-tight">
+                    Ready to Make a 
+                    <span class="text-yellow-300">Difference?</span>
+                </h2>
+                <p class="text-xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed">
+                    Join thousands of citizens who are already using CrisisBoard to transform their communities. 
+                    Your voice matters, and every issue reported brings us closer to a better society.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                    <button onclick="window.open('index.html', '_self')" class="bg-white text-gray-900 px-12 py-5 rounded-2xl font-bold text-xl shadow-2xl hover:bg-gray-100 transition-all transform hover:scale-105 group">
+                        <span class="flex items-center">
+                            Start Reporting Today
+                            <svg class="w-6 h-6 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </span>
+                    </button>
+                    
+                    <button class="glass-effect text-white px-12 py-5 rounded-2xl font-bold text-xl hover:bg-white/20 transition-all group">
+                        <span class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Learn More
+                        </span>
+                    </button>
+                </div>
+                
+                <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                    <div class="glass-effect rounded-xl p-6">
+                        <div class="text-3xl font-bold text-white mb-2">24/7</div>
+                        <div class="text-white/80">Available</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6">
+                        <div class="text-3xl font-bold text-white mb-2">100%</div>
+                        <div class="text-white/80">Free</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6">
+                        <div class="text-3xl font-bold text-white mb-2">50+</div>
+                        <div class="text-white/80">Authorities</div>
+                    </div>
+                    <div class="glass-effect rounded-xl p-6">
+                        <div class="text-3xl font-bold text-white mb-2">2min</div>
+                        <div class="text-white/80">Setup</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="grid lg:grid-cols-5 gap-12">
+                <div class="lg:col-span-2">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">CrisisBoard</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed mb-6 text-lg">
+                        Empowering communities through efficient issue tracking and resolution. 
+                        Building bridges between citizens and authorities for a better tomorrow.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 transition-all group">
+                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 transition-all group">
+                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-gradient-to-br hover:from-blue-600 hover:to-purple-600 transition-all group">
+                            <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248H8.014v-8.59h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.005 6.575a1.548 1.548 0 11-.003-3.096 1.548 1.548 0 01.003 3.096zm-1.337 9.763H6.34v-8.59H3.667v8.59zM17.668 1H2.328C1.595 1 1 1.581 1 2.298v15.403C1 18.418 1.595 19 2.328 19h15.34c.734 0 1.332-.582 1.332-1.299V2.298C19 1.581 18.402 1 17.668 1z" clip-rule="evenodd"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">Platform</h3>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            Submit Issue
+                        </a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            Track Status
+                        </a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            Community
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">Support</h3>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            Help Center
+                        </a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            Contact Us
+                        </a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            Guidelines
+                        </a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-white">Company</h3>
+                    <ul class="space-y-4 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            About
+                        </a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            Privacy
+                        </a></li>
+                        <li><a href="#" class="hover:text-white transition-colors flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                            Terms
+                        </a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p class="text-gray-400 text-lg">
+                    &copy; 2024 CrisisBoard. All rights reserved. 
+                    <span class="text-blue-400">Making communities better, one issue at a time.</span>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Enhanced Animation System
+        class AnimationController {
+            constructor() {
+                this.observers = new Map();
+                this.initializeAnimations();
+                this.initializeParallax();
+                this.initializeInteractions();
+            }
+
+            initializeAnimations() {
+                const observerOptions = {
+                    threshold: 0.15,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                // Fade in animations
+                const fadeInObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, observerOptions);
+
+                // Slide in animations
+                const slideObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, observerOptions);
+
+                // Scale in animations
+                const scaleObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, observerOptions);
+
+                // Apply observers
+                document.querySelectorAll('.fade-in').forEach(el => fadeInObserver.observe(el));
+                document.querySelectorAll('.slide-in-left, .slide-in-right').forEach(el => slideObserver.observe(el));
+                document.querySelectorAll('.scale-in').forEach(el => scaleObserver.observe(el));
+
+                this.observers.set('fadeIn', fadeInObserver);
+                this.observers.set('slide', slideObserver);
+                this.observers.set('scale', scaleObserver);
+            }
+
+            initializeParallax() {
+                let ticking = false;
+                
+                window.addEventListener('scroll', () => {
+                    if (!ticking) {
+                        requestAnimationFrame(() => {
+                            const scrolled = window.pageYOffset;
+                            const parallaxElements = document.querySelectorAll('.parallax-element');
+                            
+                            parallaxElements.forEach(element => {
+                                const speed = element.dataset.speed || 0.5;
+                                const yPos = -(scrolled * speed);
+                                element.style.transform = `translateY(${yPos}px)`;
+                            });
+                            
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                });
+            }
+
+            initializeInteractions() {
+                // Enhanced hover effects for cards
+                document.querySelectorAll('.card-hover').forEach(card => {
+                    card.addEventListener('mouseenter', (e) => {
+                        e.target.style.zIndex = '10';
+                    });
+                    
+                    card.addEventListener('mouseleave', (e) => {
+                        e.target.style.zIndex = '1';
+                    });
+                });
+
+                // Interactive buttons with ripple effect
+                document.querySelectorAll('.btn-primary').forEach(button => {
+                    button.addEventListener('click', this.createRipple);
+                });
+            }
+
+            createRipple(e) {
+                const button = e.currentTarget;
+                const ripple = document.createElement('span');
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                button.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            }
+        }
+
+        // Counter Animation
+        function animateCounter(element, target, duration = 2500) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        // Stats Counter Observer
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('.stats-counter');
+                    counters.forEach(counter => {
+                        const target = parseInt(counter.dataset.target);
+                        animateCounter(counter, target);
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Mobile Menu Controller
+        class MobileMenuController {
+            constructor() {
+                this.mobileMenu = document.getElementById('mobile-menu');
+                this.openButton = document.getElementById('mobile-menu-btn');
+                this.closeButton = document.getElementById('close-menu');
+                this.overlay = null;
+                
+                this.initializeMenu();
+            }
+
+            initializeMenu() {
+                this.openButton?.addEventListener('click', () => this.openMenu());
+                this.closeButton?.addEventListener('click', () => this.closeMenu());
+                
+                // Close menu when clicking links
+                this.mobileMenu?.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', () => this.closeMenu());
+                });
+            }
+
+            openMenu() {
+                this.mobileMenu?.classList.add('active');
+                document.body.style.overflow = 'hidden';
+                
+                // Create overlay
+                this.overlay = document.createElement('div');
+                this.overlay.className = 'fixed inset-0 bg-black bg-opacity-50 z-40';
+                this.overlay.addEventListener('click', () => this.closeMenu());
+                document.body.appendChild(this.overlay);
+            }
+
+            closeMenu() {
+                this.mobileMenu?.classList.remove('active');
+                document.body.style.overflow = '';
+                
+                if (this.overlay) {
+                    this.overlay.remove();
+                    this.overlay = null;
+                }
+            }
+        }
+
+        // Smooth Scrolling
+        function initializeSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        const offsetTop = target.getBoundingClientRect().top + window.pageYOffset - 80;
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Typing Animation
+        function initializeTypingAnimation() {
+            const typingElement = document.querySelector('.typing-animation');
+            if (typingElement && window.innerWidth > 768) {
+                const text = typingElement.textContent;
+                typingElement.textContent = '';
+                typingElement.style.width = '0';
+                
+                setTimeout(() => {
+                    let i = 0;
+                    const typeInterval = setInterval(() => {
+                        if (i < text.length) {
+                            typingElement.textContent += text.charAt(i);
+                            i++;
+                        } else {
+                            clearInterval(typeInterval);
+                        }
+                    }, 100);
+                }, 1000);
+            }
+        }
+
+        // Performance Optimization
+        function optimizeAnimations() {
+            // Reduce motion for users who prefer it
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.documentElement.style.setProperty('--animation-duration', '0.1s');
+                document.querySelectorAll('.float-animation').forEach(el => {
+                    el.style.animation = 'none';
+                });
+            }
+        }
+
+        // Advanced interaction effects
+        function initializeAdvancedEffects() {
+            // Mouse follow effect for hero section
+            const hero = document.querySelector('section');
+            if (hero) {
+                hero.addEventListener('mousemove', (e) => {
+                    const { clientX, clientY } = e;
+                    const { offsetWidth, offsetHeight } = hero;
+                    
+                    const xPercent = (clientX / offsetWidth) * 100;
+                    const yPercent = (clientY / offsetHeight) * 100;
+                    
+                    hero.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+                });
+            }
+
+            // Floating elements effect
+            document.querySelectorAll('.float-animation').forEach(element => {
+                let mouseX = 0;
+                let mouseY = 0;
+                let elementX = 0;
+                let elementY = 0;
+
+                element.addEventListener('mousemove', (e) => {
+                    const rect = element.getBoundingClientRect();
+                    mouseX = e.clientX - rect.left;
+                    mouseY = e.clientY - rect.top;
+                });
+
+                function animate() {
+                    elementX += (mouseX - elementX) * 0.1;
+                    elementY += (mouseY - elementY) * 0.1;
+                    
+                    element.style.transform = `translate(${elementX * 0.01}px, ${elementY * 0.01}px)`;
+                    requestAnimationFrame(animate);
+                }
+                animate();
+            });
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize all controllers and animations
+            const animationController = new AnimationController();
+            const mobileMenuController = new MobileMenuController();
+            
+            initializeSmoothScrolling();
+            initializeTypingAnimation();
+            optimizeAnimations();
+
+            // Initialize stats observer
+            const statsSection = document.querySelector('.stats-counter')?.closest('.slide-in-right');
+            if (statsSection) {
+                statsObserver.observe(statsSection);
+            }
+
+            // Add loading animation completion
+            document.body.classList.add('loaded');
+
+            // Initialize advanced effects after a short delay
+            setTimeout(initializeAdvancedEffects, 1000);
+        });
+
+        // Handle window resize
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                // Recalculate animations on resize if needed
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.typing-animation')?.style.setProperty('animation', 'none');
+                }
+            }, 250);
+        });
+    </script>
+</body>
+</html>
