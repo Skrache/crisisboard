@@ -1,1161 +1,1315 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script> 
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
-        <title>CrisisBoard</title>
-        <link
-            href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-            rel="stylesheet"
-        />
-        <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-          <style>
-        
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <title>CrisisBoard - Submit Issues</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-            /* Custom styles for dark mode and theme toggle */
-            .theme-toggle {
-                position: relative;
-                width: 80px;
-                height: 30px;
-                background: #000000;
-                border-radius: 15px;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
 
-            .theme-toggle.dark {
-                background: #10b981;
-            }
+        /* Landing page inspired animations and effects */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .interactive-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
 
-            .theme-toggle::before {
-                content: "";
-                position: absolute;
-                top: 2px;
-                left: 2px;
-                width: 26px;
-                height: 26px;
-                background: #000000;
-                border-radius: 50%;
-                transition: all 0.3s ease;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-            .theme-toggle.dark::before {
-                transform: translateX(50px);
-                background: #ffffff;
-            }
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+        
+        .card-hover:hover::before {
+            left: 100%;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
 
-            .theme-toggle::after {
-                content: "☀️";
-                position: absolute;
-                top: 50%;
-                left: 8px;
-                transform: translateY(-50%);
-                font-size: 12px;
-                transition: opacity 0.3s ease;
-            }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transition: all 0.6s ease;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        }
 
-            .theme-toggle.dark::after {
-                content: "🌙";
-                left: auto;
-                right: 8px;
-            }
+        .interactive-card {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
 
-            /* Mobile menu toggle */
-            .mobile-menu-toggle {
-                display: none;
-                flex-direction: column;
-                justify-content: space-around;
-                width: 30px;
-                height: 25px;
-                background: transparent;
-                border: none;
-                cursor: pointer;
-                padding: 0;
-                z-index: 10;
-            }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-            .mobile-menu-toggle span {
-                width: 100%;
-                height: 3px;
-                background: #374151;
-                border-radius: 2px;
-                transition: all 0.3s ease;
-            }
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
-            body.dark .mobile-menu-toggle span {
-                background: #f9fafb;
-            }
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
 
-            .mobile-menu-toggle.active span:nth-child(1) {
-                transform: rotate(45deg) translate(5px, 5px);
-            }
+        .scale-in {
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .scale-in.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
 
-            .mobile-menu-toggle.active span:nth-child(2) {
+        .float-animation {
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(0.5deg); }
+        }
+
+
+        .hero-pattern {
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            animation: patternMove 20s ease-in-out infinite;
+        }
+        
+        @keyframes patternMove {
+            0%, 100% { transform: translateX(0%) translateY(0%); }
+            50% { transform: translateX(3%) translateY(-3%); }
+        }
+
+        /* Theme toggle improvements */
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .theme-toggle.dark {
+            background: linear-gradient(135deg, #1f2937, #111827);
+            box-shadow: 0 4px 15px rgba(17, 24, 39, 0.5);
+        }
+
+        .theme-toggle::before {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle.dark::before {
+            transform: translateX(30px);
+            background: #f59e0b;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Enhanced sidebar */
+        .sidebar {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sidebar-item {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .sidebar-item:hover::before {
+            left: 100%;
+        }
+
+        .sidebar-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        /* Enhanced mobile menu */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            backdrop-filter: blur(20px);
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+
+        /* Form enhancements */
+        .form-input {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        /* File upload area enhancements */
+        .file-upload-area {
+            background: linear-gradient(145deg, #f8fafc, #ffffff);
+            border: 2px dashed rgba(59, 130, 246, 0.3);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .file-upload-area:hover {
+            border-color: #3b82f6;
+            background: linear-gradient(145deg, #eff6ff, #f0f9ff);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.1);
+        }
+
+        .drag-over {
+            border-color: #3b82f6 !important;
+            background: linear-gradient(145deg, #dbeafe, #eff6ff) !important;
+            transform: scale(1.02) !important;
+        }
+
+        /* Stats animation */
+        .stats-counter {
+            font-variant-numeric: tabular-nums;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Dark mode enhancements */
+        body.dark {
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: #f9fafb;
+        }
+
+        body.dark .sidebar {
+            background: linear-gradient(145deg, #1f2937, #111827);
+            border-color: rgba(75, 85, 99, 0.3);
+        }
+
+        body.dark .interactive-card {
+            background: linear-gradient(145deg, #1f2937, #111827);
+            border-color: rgba(75, 85, 99, 0.3);
+        }
+
+        body.dark .form-input {
+            background: rgba(31, 41, 55, 0.8);
+            border-color: rgba(75, 85, 99, 0.5);
+            color: #f9fafb;
+        }
+
+        body.dark .form-input:focus {
+            background: rgba(31, 41, 55, 0.95);
+            border-color: #3b82f6;
+        }
+
+        body.dark .file-upload-area {
+            background: linear-gradient(145deg, #1f2937, #111827);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        body.dark .file-upload-area:hover {
+            background: linear-gradient(145deg, #374151, #1f2937);
+        }
+
+        /* Progress bar enhancement */
+        .progress-bar {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+            background-size: 200% 100%;
+            animation: progressShimmer 2s linear infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Ripple effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
                 opacity: 0;
             }
-
-            .mobile-menu-toggle.active span:nth-child(3) {
-                transform: rotate(-45deg) translate(7px, -6px);
-            }
-
-            /* Mobile close button */
-            .mobile-close-btn {
-                display: none;
-                position: absolute;
-                top: 1rem;
-                right: 1rem;
-                width: 40px;
-                height: 40px;
-                background: #ef4444;
-                border: none;
-                border-radius: 50%;
-                color: white;
-                font-size: 20px;
-                cursor: pointer;
-                z-index: 60;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow:
-                    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                transform: scale(0.8);
-                opacity: 0;
-            }
-
-            .mobile-close-btn:hover {
-                background: #dc2626;
-                transform: scale(1.15) rotate(90deg);
-                box-shadow:
-                    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-                    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            }
-
-            .mobile-close-btn:active {
-                transform: scale(0.95) rotate(90deg);
-                transition: all 0.1s ease;
-            }
-
-            body.dark .mobile-close-btn {
-                background: #dc2626;
-                box-shadow:
-                    0 4px 6px -1px rgba(0, 0, 0, 0.3),
-                    0 2px 4px -1px rgba(0, 0, 0, 0.2);
-            }
-
-            body.dark .mobile-close-btn:hover {
-                background: #b91c1c;
-                box-shadow:
-                    0 10px 15px -3px rgba(0, 0, 0, 0.4),
-                    0 4px 6px -2px rgba(0, 0, 0, 0.3);
-            }
-
-            /* Close button animation when sidebar opens */
-            .sidebar.open .mobile-close-btn {
-                transform: scale(1) rotate(0deg);
-                opacity: 1;
-                animation: closeButtonAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .sidebar.open .mobile-close-btn::after {
-                content: "";
-                position: absolute;
-                top: -2px;
-                left: -2px;
-                right: -2px;
-                bottom: -2px;
-                border-radius: 50%;
-                background: rgba(239, 68, 68, 0.2);
-                animation: closeButtonPulse 2s ease-in-out infinite;
-                z-index: -1;
-            }
-
-            @keyframes closeButtonAppear {
-                0% {
-                    transform: scale(0.5) rotate(-180deg);
-                    opacity: 0;
-                }
-                50% {
-                    transform: scale(1.1) rotate(-90deg);
-                    opacity: 0.7;
-                }
-                100% {
-                    transform: scale(1) rotate(0deg);
-                    opacity: 1;
-                }
-            }
-
-            @keyframes closeButtonPulse {
-                0%,
-                100% {
-                    transform: scale(1);
-                    opacity: 0.3;
-                }
-                50% {
-                    transform: scale(1.2);
-                    opacity: 0.1;
-                }
-            }
-
-            /* Responsive sidebar */
-            @media (max-width: 768px) {
-                .sidebar {
-                    position: fixed;
-                    left: -100%;
-                    top: 0;
-                    z-index: 50;
-                    transition: left 0.3s ease;
-                }
-
-                .sidebar.open {
-                    left: 0;
-                }
-
-                .mobile-menu-toggle {
-                    display: flex;
-                }
-
-                .mobile-close-btn {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-
-                .main-content {
-                    margin-left: 0;
-                }
-            }
-
-            /* Dark mode styles - Custom implementation for Tailwind v2 */
-            body.dark {
-                background-color: #111827 !important;
-                color: #f9fafb !important;
-            }
-
-            body.dark .bg-white {
-                background-color: #1f2937 !important;
-            }
-
-            body.dark .bg-gray-50 {
-                background-color: #111827 !important;
-            }
-
-            body.dark .bg-gray-100 {
-                background-color: #374151 !important;
-            }
-
-            body.dark .bg-gray-800 {
-                background-color: #1f2937 !important;
-            }
-
-            body.dark .bg-gray-900 {
-                background-color: #111827 !important;
-            }
-
-            body.dark .text-gray-800 {
-                color: #f9fafb !important;
-            }
-
-            body.dark .text-gray-700 {
-                color: #d1d5db !important;
-            }
-
-            body.dark .text-gray-600 {
-                color: #9ca3af !important;
-            }
-
-            body.dark .text-gray-500 {
-                color: #6b7280 !important;
-            }
-
-            body.dark .text-gray-400 {
-                color: #9ca3af !important;
-            }
-
-            body.dark .text-gray-300 {
-                color: #d1d5db !important;
-            }
-
-            body.dark .text-gray-200 {
-                color: #e5e7eb !important;
-            }
-
-            body.dark .text-gray-100 {
-                color: #f3f4f6 !important;
-            }
-
-            body.dark .text-white {
-                color: #ffffff !important;
-            }
-
-            /* Additional text color fixes for better visibility */
-            body.dark .text-gray-900 {
-                color: #f9fafb !important;
-            }
-
-            body.dark .text-black {
-                color: #ffffff !important;
-            }
-
-            /* Form input text colors */
-            body.dark input,
-            body.dark textarea,
-            body.dark select {
-                color: #f9fafb !important;
-            }
-
-            body.dark input::placeholder,
-            body.dark textarea::placeholder {
-                color: #9ca3af !important;
-            }
-
-            /* Ensure all text elements are visible */
-            body.dark p,
-            body.dark span,
-            body.dark div,
-            body.dark label,
-            body.dark h1,
-            body.dark h2,
-            body.dark h3,
-            body.dark h4,
-            body.dark h5,
-            body.dark h6 {
-                color: inherit;
-            }
-
-            /* Specific fixes for form elements */
-            body.dark .bg-white input,
-            body.dark .bg-white textarea {
-                color: #f9fafb !important;
-            }
-
-            body.dark .bg-white input::placeholder,
-            body.dark .bg-white textarea::placeholder {
-                color: #9ca3af !important;
-            }
-
-            body.dark .border-gray-200 {
-                border-color: #374151 !important;
-            }
-
-            body.dark .border-gray-300 {
-                border-color: #4b5563 !important;
-            }
-
-            body.dark .border-gray-600 {
-                border-color: #4b5563 !important;
-            }
-
-            body.dark .border-gray-700 {
-                border-color: #374151 !important;
-            }
-
-            body.dark .bg-blue-50 {
-                background-color: rgba(59, 130, 246, 0.1) !important;
-            }
-
-            body.dark .bg-blue-900\/30 {
-                background-color: rgba(30, 58, 138, 0.3) !important;
-            }
-
-            body.dark .border-blue-200 {
-                border-color: rgba(59, 130, 246, 0.3) !important;
-            }
-
-            body.dark .border-blue-700 {
-                border-color: rgba(29, 78, 216, 0.5) !important;
-            }
-
-            body.dark .text-blue-800 {
-                color: #93c5fd !important;
-            }
-
-            body.dark .text-blue-200 {
-                color: #93c5fd !important;
-            }
-
-            body.dark .text-blue-600 {
-                color: #60a5fa !important;
-            }
-
-            body.dark .text-blue-400 {
-                color: #60a5fa !important;
-            }
-
-            body.dark .hover\:text-blue-800:hover {
-                color: #93c5fd !important;
-            }
-
-            body.dark .hover\:text-blue-200:hover {
-                color: #bfdbfe !important;
-            }
-
-            body.dark .bg-green-50 {
-                background-color: rgba(34, 197, 94, 0.1) !important;
-            }
-
-            body.dark .bg-green-900\/30 {
-                background-color: rgba(21, 128, 61, 0.3) !important;
-            }
-
-            body.dark .border-green-200 {
-                border-color: rgba(34, 197, 94, 0.3) !important;
-            }
-
-            body.dark .border-green-700 {
-                border-color: rgba(21, 128, 61, 0.5) !important;
-            }
-
-            body.dark .text-green-800 {
-                color: #86efac !important;
-            }
-
-            body.dark .text-green-200 {
-                color: #86efac !important;
-            }
-
-            body.dark .text-green-700 {
-                color: #6ee7b7 !important;
-            }
-
-            body.dark .text-green-300 {
-                color: #6ee7b7 !important;
-            }
-
-            body.dark .bg-yellow-100 {
-                background-color: rgba(253, 224, 71, 0.2) !important;
-            }
-
-            body.dark .bg-yellow-900 {
-                background-color: rgba(120, 113, 108, 0.3) !important;
-            }
-
-            body.dark .text-yellow-800 {
-                color: #fde047 !important;
-            }
-
-            body.dark .text-yellow-200 {
-                color: #fef3c7 !important;
-            }
-
-            body.dark .text-green-600 {
-                color: #10b981 !important;
-            }
-
-            body.dark .text-green-400 {
-                color: #34d399 !important;
-            }
-
-            body.dark .placeholder-gray-500::placeholder {
-                color: #6b7280 !important;
-            }
-
-            body.dark .placeholder-gray-400::placeholder {
-                color: #9ca3af !important;
-            }
-
-            body.dark .focus\:ring-blue-500:focus {
-                --tw-ring-color: #3b82f6 !important;
-            }
-
-            body.dark .focus\:ring-blue-400:focus {
-                --tw-ring-color: #60a5fa !important;
-            }
-
-            body.dark .focus\:ring-blue-600:focus {
-                --tw-ring-color: #2563eb !important;
-            }
-
-            body.dark .ring-offset-gray-800 {
-                --tw-ring-offset-color: #1f2937 !important;
-            }
-
-            /* Additional dark mode improvements */
-            body.dark .bg-gray-700 {
-                background-color: #374151 !important;
-            }
-
-            body.dark .bg-gray-600 {
-                background-color: #4b5563 !important;
-            }
-
-            /* Ensure form elements are properly styled in dark mode */
-            body.dark input[type="checkbox"] {
-                background-color: #374151 !important;
-                border-color: #6b7280 !important;
-            }
-
-            body.dark input[type="checkbox"]:checked {
-                background-color: #3b82f6 !important;
-                border-color: #3b82f6 !important;
-            }
-
-            /* Fix for any remaining black text */
-            body.dark * {
-                color-scheme: dark;
-            }
-
-            /* Dark mode styling for dynamically created items */
-            body.dark .dark-mode-item {
-                background-color: #1f2937 !important;
-                border-color: #374151 !important;
-            }
-
-            body.dark .dark-mode-item p {
-                color: #f9fafb !important;
-            }
-
-            body.dark .dark-mode-item .text-gray-500 {
-                color: #9ca3af !important;
-            }
-
-            /* Smooth transitions for all elements */
-            * {
-                transition:
-                    background-color 0.3s ease,
-                    color 0.3s ease,
-                    border-color 0.3s ease;
-            }
-
-            /* Custom scrollbar */
-            ::-webkit-scrollbar {
-                width: 8px;
-            }
-
-            ::-webkit-scrollbar-track {
-                background: #f1f5f9;
-            }
-
-            body.dark ::-webkit-scrollbar-track {
-                background: #374151;
-            }
-
-            ::-webkit-scrollbar-thumb {
-                background: #cbd5e1;
-                border-radius: 4px;
-            }
-
-            body.dark ::-webkit-scrollbar-thumb {
-                background: #64748b;
-            }
-
-            /* Glass morphism effect */
-            .glass {
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-            }
-
-            body.dark .glass {
-                background: rgba(0, 0, 0, 0.1);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-            }
-
-            /* Responsive improvements */
-            @media (max-width: 640px) {
-                .theme-toggle {
-                    width: 60px;
-                    height: 25px;
-                }
-
-                .theme-toggle::before {
-                    width: 21px;
-                    height: 21px;
-                }
-
-                .theme-toggle.dark::before {
-                    transform: translateX(35px);
-                }
-            }
-
-            /* File upload enhancements */
-            .file-preview-item {
-                position: relative;
-                transition: all 0.2s ease;
-            }
-
-            .file-preview-item:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            }
-
-            .file-preview-item .remove-btn {
-                opacity: 0;
-                transition: opacity 0.2s ease;
-            }
-
-            .file-preview-item:hover .remove-btn {
-                opacity: 1;
-            }
-
-            .file-preview-item .file-icon {
-                transition: transform 0.2s ease;
-            }
-
-            .file-preview-item:hover .file-icon {
-                transform: scale(1.1);
-            }
-
-            /* Drag and drop visual feedback */
-            .drag-over {
-                background-color: rgba(59, 130, 246, 0.1) !important;
-                border-color: #3b82f6 !important;
-                transform: scale(1.02);
-            }
-
-            body.dark .drag-over {
-                background-color: rgba(59, 130, 246, 0.2) !important;
-            }
-
-            /* File type icons */
-            .file-type-icon {
-                font-size: 2rem;
-                filter: grayscale(0.3);
-                transition: filter 0.2s ease;
-            }
-
-            .file-preview-item:hover .file-type-icon {
-                filter: grayscale(0);
-            }
-
-            /* Progress bar animation */
-            @keyframes progressPulse {
-                0%,
-                100% {
-                    opacity: 1;
-                }
-                50% {
-                    opacity: 0.7;
-                }
-            }
-
-            .uploading .uploadProgressBar {
-                animation: progressPulse 2s ease-in-out infinite;
-            }
-        </style>
-    </head>
-    <body
-        class="flex flex-col md:flex-row h-screen bg-gray-50 text-gray-900 transition-colors duration-300"
-    >
-    <div id="complaintStatus"></div>
-
-        <!-- Mobile Header -->
-        <div
-            class="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200"
-        >
-            <h1 class="text-lg font-bold text-gray-800">CrisisBoard</h1>
+        }
+
+        /* Enhanced scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, #f1f5f9, #e2e8f0);
+        }
+
+        body.dark ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, #374151, #1f2937);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #cbd5e1, #94a3b8);
+            border-radius: 4px;
+        }
+
+        body.dark ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #64748b, #475569);
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                z-index: 50;
+                width: 280px;
+                height: 100vh;
+            }
+
+            .sidebar.open {
+                left: 0;
+                box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Loading states */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #3b82f6;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gray-50 text-gray-900 transition-all duration-300">
+    <!-- Background Pattern -->
+    <div class="hero-pattern fixed inset-0 opacity-30 pointer-events-none"></div>
+    
+    <!-- Mobile Header -->
+    <header class="md:hidden fixed top-0 left-0 right-0 z-40 glass-effect border-b border-gray-200/20">
+        <div class="flex items-center justify-between p-4">
             <div class="flex items-center space-x-3">
-                <div
-                    class="theme-toggle"
-                    id="themeToggleMobile"
-                    title="Toggle dark/light mode"
-                ></div>
-                <button class="mobile-menu-toggle" id="mobileMenuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg ">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">CrisisBoard</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <div class="theme-toggle" id="themeToggleMobile" title="Toggle dark/light mode"></div>
+                <button class="p-2 rounded-xl hover:bg-white/20 transition-all" id="mobileMenuToggle">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar fixed left-0 top-0 w-80 h-full z-30 p-6 border-r border-gray-200/20 shadow-2xl">
+        <!-- Desktop Header -->
+        <div class="hidden md:flex items-center justify-between mb-8">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg float-animation">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <span class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">CrisisBoard</span>
+            </div>
+            <div class="theme-toggle" id="themeToggle" title="Toggle dark/light mode"></div>
+        </div>
+
+        <!-- Mobile Close Button -->
+        <button class="md:hidden absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all transform hover:scale-110" id="mobileCloseBtn">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+
+        <div class="space-y-6 mt-8 md:mt-0">
+            <!-- Profile Section -->
+            <div class="sidebar-item interactive-card rounded-2xl p-4 card-hover">
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800">Profile</h3>
+                </div>
+                <a href="Profile.html" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                    <span>Sign in to view profile</span>
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Your Complaints Section -->
+            <div class="sidebar-item interactive-card rounded-2xl p-4 card-hover">
+                <div class="flex items-center space-x-3 mb-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800">Your Complaints</h3>
+                </div>
+                <a href="#" class="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                    <span>Sign in to view complaints</span>
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="sidebar-item interactive-card rounded-2xl p-4 card-hover">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800">Quick Stats</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-3 bg-gradient-to-br from-green-50 to-green-100 rounded-xl">
+                        <div class="text-2xl font-black stats-counter text-green-600">12</div>
+                        <div class="text-xs text-green-700 font-medium">Resolved</div>
+                    </div>
+                    <div class="text-center p-3 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl">
+                        <div class="text-2xl font-black stats-counter text-yellow-600">3</div>
+                        <div class="text-xs text-yellow-700 font-medium">Pending</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="sidebar-item interactive-card rounded-2xl p-4 card-hover">
+                <a href="feedback.html" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-lg text-gray-800">Feedback</h3>
+                        <p class="text-xs text-gray-600">Help us improve</p>
+                    </div>
+                    <svg class="w-5 h-5 text-gray-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content ml-0 md:ml-80 min-h-screen p-4 md:p-8 pt-20 md:pt-8">
+        <!-- Header Section -->
+        <div class="fade-in mb-8">
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg float-animation">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-black text-gray-800 mb-2">Welcome to CrisisBoard</h1>
+                    <p class="text-lg text-gray-600">Submit and track community issues efficiently with our intelligent routing system</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Tabs -->
+        <div class="slide-in-left mb-8">
+            <div class="flex flex-wrap gap-2 p-2 bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl w-fit">
+                <button class="px-6 py-3 rounded-xl bg-white text-gray-800 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                    <span class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>Resolved Issues</span>
+                    </span>
+                </button>
+                <button class="px-6 py-3 rounded-xl text-gray-600 font-semibold hover:text-gray-800 hover:bg-white/50 transition-all duration-300">
+                    <span class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                        <span>Community</span>
+                    </span>
+                </button>
+                <button class="px-6 py-3 rounded-xl text-gray-600 font-semibold hover:text-gray-800 hover:bg-white/50 transition-all duration-300">
+                    <span class="flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0H4m0 0l4-4m0 4l-4-4"/>
+                        </svg>
+                        <span>Inbox</span>
+                    </span>
                 </button>
             </div>
         </div>
 
-        <!-- Sidebar -->
-        <aside
-            class="sidebar w-full md:w-64 bg-white shadow-lg p-4 md:p-6 border-r border-gray-200 transition-all duration-300 h-screen md:h-auto relative"
-        >
-            <!-- Mobile Close Button -->
-            <button
-                class="mobile-close-btn"
-                id="mobileCloseBtn"
-                title="Close menu"
-            >
-                <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M6 18L18 6M6 6l12 12"
-                    ></path>
-                </svg>
-            </button>
-
-            <div class="hidden md:flex items-center justify-between mb-6">
-                <h1 class="text-xl font-bold text-gray-800">CrisisBoard</h1>
-                <!-- Theme Toggle Button -->
-                <div
-                    class="theme-toggle"
-                    id="themeToggle"
-                    title="Toggle dark/light mode"
-                ></div>
-            </div>
-
-            <div class="space-y-4">
-                <div class="p-3 rounded-lg bg-yellow-50 border border-yellow-200">
-                    <h3 class="font-semibold text-yellow-800 mb-2">
-                        Profile
-                    </h3>
-                    <a
-                        href="Profile.html"
-                        class="text-yellow-600 hover:text-yellow-800 text-sm transition-colors"
-                        >Sign in to view profile</a
-                    >
-                </div>
-
-            <div class="space-y-4">
-                <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
-                    <h3 class="font-semibold text-blue-800 mb-2">
-                        Your Complaints
-                    </h3>
-                    <a
-                        href="#"
-                        class="text-blue-600 hover:text-blue-800 text-sm transition-colors"
-                        >Sign in to view complaints</a
-                    >
-                </div>
-
-                <div class="p-3 rounded-lg bg-green-50 border border-green-200">
-                    <h3 class="font-semibold text-green-800 mb-2">
-                        Quick Stats
-                    </h3>
-                    <div class="text-sm text-green-700">
-                        <div>Resolved: 12</div>
-                        <div>Pending: 3</div>
-                    </div>
-                </div>
-                <div
-                    class="p-3 rounded-lg bg-brown-100 border border-yellow-300 hover:bg-gray-100 transition-colors"
-                >
-                    <a
-                        href="feedback.html"
-                        class="flex items-center space-x-2 text-black-700 hover:text-blue-600"
-                    >
-                        <svg
-                            class="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                            />
+        <!-- Main Form Section -->
+        <section class="scale-in">
+            <div class="interactive-card rounded-3xl shadow-2xl p-8 border-2 border-gray-100 card-hover">
+                <!-- Form Header -->
+                <div class="text-center mb-8">
+                    <div class="inline-block p-4 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl mb-4">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
                         </svg>
-                        <span>Feedback</span>
-                    </a>
+                    </div>
+                    <h3 class="text-3xl font-black text-gray-800 mb-3">Submit an Issue</h3>
+                    <p class="text-gray-600 max-w-2xl mx-auto">Help us make your community better by reporting issues that need attention. Our AI will automatically route your concern to the right authorities.</p>
                 </div>
-            </div>
-        </aside>
 
-        <!-- Main Content -->
-        <main class="main-content flex-1 p-4 md:p-6 overflow-y-auto h-screen">
-            <!-- Header with enhanced styling -->
-            <div class="mb-4">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-                    Welcome to CrisisBoard
-                </h2>
-                <p class="text-gray-600 text-sm">
-                    Submit and track community issues efficiently
-                </p>
-            </div>
-
-            <!-- Enhanced Tabs -->
-            <div
-                class="flex flex-wrap space-x-1 mb-4 p-1 bg-gray-100 rounded-lg w-fit"
-            >
-                <button
-                    class="px-3 md:px-4 py-2 rounded-md bg-white text-gray-800 font-medium shadow-sm transition-all duration-200 hover:shadow-md text-sm md:text-base"
-                >
-                    Resolved
-                </button>
-                <button
-                    class="px-3 md:px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm md:text-base"
-                >
-                    Community
-                </button>
-                <button
-                    class="px-3 md:px-4 py-2 rounded-md text-gray-600 font-medium hover:text-gray-800 transition-colors text-sm md:text-base"
-                >
-                    Inbox
-                </button>
-            </div>
-
-            <!-- Enhanced Form Section -->
-            <section class="w-full">
-                <div
-                    class="bg-white rounded-xl shadow-lg p-4 md:p-5 border border-gray-200"
-                >
-                    <h3
-                        class="text-xl md:text-2xl font-bold mb-4 text-gray-800"
-                    >
-                        Submit an Issue
-                    </h3>
-                    <form id="complaintForm" class="space-y-4">
-                        <div>
-                            <label
-                                for="issueText"
-                                class="block text-sm font-medium text-gray-700 mb-2"
-                                >Issue Description</label
-                            >
-                            <textarea
-                                id="issueText"
-                                rows="4"
-                                placeholder="Describe your issue in detail..."
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500 resize-none"
-                            ></textarea>
+                <form id="complaintForm" class="space-y-6">
+                    <!-- Issue Description -->
+                    <div class="fade-in">
+                        <label for="issueText" class="block text-lg font-semibold text-gray-700 mb-3">
+                            Issue Description
+                            <span class="text-red-500">*</span>
+                        </label>
+                        <textarea
+                            id="issueText"
+                            rows="5"
+                            placeholder="Please describe your issue in detail. Include location, severity, and any other relevant information that would help authorities understand and address the problem effectively..."
+                            class="form-input w-full p-4 border-2 border-gray-300 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 resize-none text-gray-900 placeholder-gray-500"
+                            required
+                        ></textarea>
+                        <div class="flex justify-between items-center mt-2 text-sm text-gray-500">
+                            <span>Minimum 20 characters required</span>
+                            <span id="charCount">0 / 500</span>
                         </div>
-                        <!-- Enhanced File Upload Area -->
-                        <div>
-                            <label
-                                class="block text-sm font-medium text-gray-700 mb-2"
-                                >Attach Files (Optional)</label
-                            >
-                            <div
-                                id="fileUploadArea"
-                                class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all duration-200 hover:border-blue-400 group relative"
-                            >
-                                <input
-                                    type="file"
-                                    id="fileInput"
-                                    multiple
-                                    accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.mp3,.wav,.mp4,.avi,.mov"
-                                    class="hidden"
-                                />
-                                <div class="space-y-3">
-                                    <div
-                                        class="text-4xl text-gray-400 group-hover:text-blue-500 transition-colors"
-                                    >
-                                        📎
+                    </div>
+
+                    <!-- Enhanced File Upload Area -->
+                    <div class="fade-in">
+                        <label class="block text-lg font-semibold text-gray-700 mb-3">
+                            Attach Evidence (Optional)
+                        </label>
+                        <div id="fileUploadArea" class="file-upload-area rounded-2xl p-8 text-center cursor-pointer relative overflow-hidden">
+                            <input type="file" id="fileInput" multiple accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx,.mp3,.wav,.mp4,.avi,.mov" class="hidden" />
+                            <div class="space-y-4">
+                                <div class="text-6xl opacity-60">
+                                    📎
+                                </div>
+                                <div>
+                                    <p class="text-xl font-semibold text-gray-700 mb-2">
+                                        Drag & drop files here
+                                    </p>
+                                    <p class="text-gray-600">
+                                        or <span class="text-blue-600 underline cursor-pointer hover:text-blue-800 font-medium" id="fileInputLabel">browse from your device</span>
+                                    </p>
+                                    <div class="mt-4 flex flex-wrap justify-center gap-2 text-xs text-gray-500">
+                                        <span class="px-2 py-1 bg-gray-100 rounded-full">📷 Images</span>
+                                        <span class="px-2 py-1 bg-gray-100 rounded-full">📄 PDFs</span>
+                                        <span class="px-2 py-1 bg-gray-100 rounded-full">📝 Documents</span>
+                                        <span class="px-2 py-1 bg-gray-100 rounded-full">🎵 Audio</span>
+                                        <span class="px-2 py-1 bg-gray-100 rounded-full">🎬 Video</span>
                                     </div>
-                                    <div>
-                                        <p class="text-gray-600 font-medium">
-                                            Drag & drop files here, or
-                                            <span
-                                                class="text-blue-600 underline cursor-pointer hover:text-blue-800"
-                                                id="fileInputLabel"
-                                                >browse</span
-                                            >
-                                        </p>
-                                        <p class="text-xs text-gray-400 mt-2">
-                                            Max 5MB per file, 20MB total
-                                        </p>
-                                        <p class="text-xs text-gray-400">
-                                            Supported: Images, PDFs, Documents,
-                                            Audio, Video
-                                        </p>
-                                    </div>
+                                    <p class="text-xs text-gray-400 mt-3">
+                                        Max 5MB per file • 20MB total • Up to 10 files
+                                    </p>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- File Preview Grid -->
-                        <div id="filePreviewContainer" class="hidden">
-                            <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-sm font-medium text-gray-700">
-                                    Selected Files
-                                </h4>
-                                <button
-                                    type="button"
-                                    id="clearAllFiles"
-                                    class="text-xs text-red-600 hover:text-red-800 font-medium"
-                                >
-                                    Clear All
-                                </button>
-                            </div>
-                            <div
-                                id="filePreviewGrid"
-                                class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mb-3"
-                            ></div>
-                            <div class="text-xs text-gray-500">
-                                <span id="fileCount">0</span> files selected •
-                                <span id="totalSize">0 MB</span> total
-                            </div>
-                        </div>
-
-                        <!-- Upload Progress -->
-                        <div
-                            id="uploadProgressContainer"
-                            class="w-full mb-3 hidden"
-                        >
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm font-medium text-gray-700"
-                                    >Uploading files...</span
-                                >
-                                <span
-                                    id="uploadPercentage"
-                                    class="text-sm text-gray-500"
-                                    >0%</span
-                                >
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div
-                                    id="uploadProgressBar"
-                                    class="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out"
-                                    style="width: 0%"
-                                ></div>
-                            </div>
-                            <div
-                                id="uploadProgressText"
-                                class="text-xs text-gray-500 mt-1 text-center"
-                            ></div>
-                        </div>
-
-                        <div
-                            id="privacyBadgeContainer"
-                            class="flex items-center space-x-2 mb-2 opacity-0 pointer-events-none transition-opacity duration-300"
-                            aria-live="polite"
-                        >
-                            <span
-                                id="privacyBadge"
-                                class="inline-flex items-center px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-semibold"
-                            >
-                                <svg
-                                    class="w-4 h-4 mr-1 text-green-500"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        d="M12 22c5.523 0 10-4.477 10-10V7a2 2 0 0 0-1.106-1.789l-7-4a2 2 0 0 0-1.788 0l-7 4A2 2 0 0 0 2 7v5c0 5.523 4.477 10 10 10z"
-                                    />
-                                    <path d="M9 12l2 2 4-4" />
+                    <!-- File Preview Section -->
+                    <div id="filePreviewContainer" class="hidden fade-in">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-lg font-semibold text-gray-700 flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                Privacy Assured
+                                <span>Selected Files</span>
+                            </h4>
+                            <button type="button" id="clearAllFiles" class="text-red-600 hover:text-red-800 font-medium text-sm flex items-center space-x-1 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                <span>Clear All</span>
+                            </button>
+                        </div>
+                        <div id="filePreviewGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-4"></div>
+                        <div class="flex justify-between items-center text-sm text-gray-500 p-3 bg-gray-50 rounded-xl">
+                            <span><span id="fileCount">0</span> files selected</span>
+                            <span><span id="totalSize">0 MB</span> total size</span>
+                        </div>
+                    </div>
+
+                    <!-- Upload Progress -->
+                    <div id="uploadProgressContainer" class="hidden fade-in">
+                        <div class="bg-white rounded-xl p-6 border-2 border-blue-200">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-blue-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Uploading Files</h4>
+                                        <p class="text-sm text-gray-600" id="uploadProgressText">Preparing files...</p>
+                                    </div>
+                                </div>
+                                <div class="text-2xl font-bold text-blue-600" id="uploadPercentage">0%</div>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                                <div id="uploadProgressBar" class="progress-bar h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Badge -->
+                    <div id="privacyBadgeContainer" class="flex items-center justify-center space-x-3 opacity-0 transition-opacity duration-500">
+                        <div class="glass-effect px-4 py-2 rounded-full">
+                            <span id="privacyBadge" class="inline-flex items-center text-green-800 text-sm font-semibold">
+                                <svg class="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                Your privacy is protected
                             </span>
                         </div>
-                        <div
-                            id="privacyLiveRegion"
-                            class="sr-only"
-                            aria-live="polite"
-                        ></div>
+                    </div>
 
-                        <div class="flex items-center space-x-3">
-                            <input
-                                type="checkbox"
-                                id="includeEmail"
-                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
-                            />
-                            <label
-                                for="includeEmail"
-                                class="text-sm text-gray-700"
-                                >Include my email in the report</label
-                            >
+                    <!-- Options -->
+                    <div class="fade-in">
+                        <div class="interactive-card rounded-2xl p-6">
+                            <h4 class="font-semibold text-gray-800 mb-4 flex items-center space-x-2">
+                                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <span>Submission Options</span>
+                            </h4>
+                            <div class="space-y-4">
+                                <label class="flex items-center space-x-3 cursor-pointer group">
+                                    <input type="checkbox" id="includeEmail" class="w-5 h-5 text-blue-600 bg-gray-100 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 transition-all" />
+                                    <div class="flex-1">
+                                        <span class="text-gray-800 font-medium group-hover:text-blue-600 transition-colors">Include my email in the report</span>
+                                        <p class="text-sm text-gray-600">This allows authorities to contact you directly for updates or clarification.</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-center space-x-3 cursor-pointer group">
+                                    <input type="checkbox" id="urgentIssue" class="w-5 h-5 text-red-600 bg-gray-100 border-2 border-gray-300 rounded focus:ring-red-500 focus:ring-2 transition-all" />
+                                    <div class="flex-1">
+                                        <span class="text-gray-800 font-medium group-hover:text-red-600 transition-colors">Mark as urgent</span>
+                                        <p class="text-sm text-gray-600">Use only for issues requiring immediate attention (safety hazards, emergencies).</p>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
+                    </div>
 
-                        <button
-                            type="submit"
-                            class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-                        >
-                            Submit Issue
+                    <!-- Submit Button -->
+                    <div class="text-center pt-6">
+                        <button type="submit" class="btn-primary text-white font-bold py-4 px-12 rounded-2xl shadow-2xl text-lg hover:shadow-3xl transform hover:-translate-y-2 transition-all duration-300 relative overflow-hidden">
+                            <span class="relative z-10 flex items-center justify-center space-x-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                                <span>Submit Issue Report</span>
+                            </span>
                         </button>
+                        <p class="text-sm text-gray-500 mt-4">Your issue will be automatically categorized and sent to the appropriate authorities</p>
+                    </div>
 
-                        <div
-                            id="statusMessage"
-                            class="text-center text-sm font-medium"
-                        ></div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- Enhanced Sign-in Button -->
-            <div class="mt-7 w-full">
-                <button id="googleSignInBtn" class="w-full max-w-xxl mx-auto flex items-center justify-center gap-2 bg-gray-300 border border-gray-600 text-black-700 font-medium py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-200">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
-                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                            </svg>
-                            Sign in with Google
-                        </button>
-                <!-- Footer -->
-<footer class="mt-10 border-t border-gray-300 dark:border-gray-700 py-6">
-  <div class="container mx-auto flex flex-col md:flex-row justify-between items-center text-sm text-gray-600 dark:text-gray-400 space-y-3 md:space-y-0">
-    
-    <!-- Copyright -->
-    <div>
-      &copy; <span id="currentYear"></span> CrisisBoard. All rights reserved.
-    </div>
-    
-    <!-- Footer Navigation Links -->
-    <nav class="flex space-x-4">
-      <a href="#" class="hover:text-blue-500">Privacy Policy</a>
-      <a href="#" class="hover:text-blue-500">Terms</a>
-      <a href="#" class="hover:text-blue-500">Contact</a>
-    </nav>
-    
-    <!-- Social Media Icons -->
-    <div class="flex space-x-4">
-      <!-- GitHub -->
-      <a href="https://github.com/Skrache/crisisboard" target="_blank" aria-label="GitHub" class="hover:text-blue-500">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.438 9.772 8.207 11.366.6.111.793-.261.793-.579
-                   0-.286-.011-1.04-.017-2.041-3.338.725-4.042-1.611-4.042-1.611-.546-1.387-1.333-1.755-1.333-1.755
-                   -1.089-.745.083-.73.083-.73 1.205.085 1.84 1.236 1.84 1.236 1.07 1.833 2.807 1.303 3.492.997.108-.775.419-1.304.762-1.604
-                   -2.665-.305-5.467-1.332-5.467-5.931 0-1.31.469-2.381 1.236-3.221-.124-.304-.536-1.528.117-3.183 0 0 1.008-.322 3.301 1.23
-                   a11.48 11.48 0 0 1 3.004-.404c1.018.005 2.043.138 3.003.404 2.293-1.552 3.299-1.23 3.299-1.23.655 1.655.243 2.879.12 3.183
-                   .77.84 1.235 1.911 1.235 3.221 0 4.61-2.807 5.624-5.48 5.921.43.37.823 1.102.823 2.222 0 1.605-.015 2.896-.015 3.289
-                   0 .321.192.694.8.576C20.565 22.27 24 17.791 24 12.5 24 5.87 18.627.5 12 .5z"/>
-        </svg>
-      </a>
-      <!-- Twitter -->
-      <a href="#" target="_blank" aria-label="Twitter" class="hover:text-blue-500">
-        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M24 4.557a9.93 9.93 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724
-                   9.864 9.864 0 0 1-3.127 1.195A4.916 4.916 0 0 0 16.616 3c-2.737
-                   0-4.956 2.22-4.956 4.956 0 .39.045.765.127 1.124C7.728 8.9
-                   4.1 6.884 1.671 3.897a4.935 4.935 0 0 0-.67 2.49c0 1.72.875
-                   3.235 2.205 4.123a4.904 4.904 0 0 1-2.247-.621v.062c0
-                   2.404 1.71 4.406 3.977 4.862a4.936 4.936 0 0 1-2.24.085
-                   4.93 4.93 0 0 0 4.604 3.417A9.867 9.867 0 0 1 0 19.54
-                   13.93 13.93 0 0 0 7.548 21.5c9.057 0 14.01-7.508
-                   14.01-14.01 0-.213-.005-.425-.014-.636A10.025 10.025 0 0 0 24 4.557z"/>
-        </svg>
-      </a>
-    </div>
-
-  </div>
-</footer>
-
-<!-- Year Script -->
-<script>
-  document.getElementById("currentYear").textContent = new Date().getFullYear();
-</script>
-
+                    <!-- Status Message -->
+                    <div id="statusMessage" class="text-center font-medium transition-all duration-300"></div>
+                </form>
             </div>
-        </main>
+        </section>
 
-        <!-- App Script -->
-        <script src="app.js"></script>
+        <!-- Quick Actions Section -->
+        <section class="slide-in-right mt-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center space-x-3">
+                <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                <span>Quick Actions</span>
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="interactive-card rounded-2xl p-6 card-hover text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Track Your Issues</h3>
+                    <p class="text-gray-600 text-sm mb-4">Monitor the progress of your submitted complaints in real-time</p>
+                    <button class="text-green-600 font-medium text-sm hover:text-green-800 transition-colors">View Status →</button>
+                </div>
 
-        <!-- Theme Toggle Script -->
-        <script>
-            // Theme toggle functionality
-            const themeToggle = document.getElementById("themeToggle");
-            const themeToggleMobile =
-                document.getElementById("themeToggleMobile");
-            const body = document.body;
-            const mobileMenuToggle =
-                document.getElementById("mobileMenuToggle");
-            const mobileCloseBtn = document.getElementById("mobileCloseBtn");
-            const sidebar = document.querySelector(".sidebar");
+                <div class="interactive-card rounded-2xl p-6 card-hover text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Community Forum</h3>
+                    <p class="text-gray-600 text-sm mb-4">Connect with neighbors and discuss local issues</p>
+                    <button class="text-blue-600 font-medium text-sm hover:text-blue-800 transition-colors">Join Discussion →</button>
+                </div>
 
-            // Check for saved theme preference or default to light mode
-            const currentTheme = localStorage.getItem("theme") || "light";
-            body.classList.toggle("dark", currentTheme === "dark");
-            themeToggle?.classList.toggle("dark", currentTheme === "dark");
-            themeToggleMobile?.classList.toggle(
-                "dark",
-                currentTheme === "dark",
-            );
+                <div class="interactive-card rounded-2xl p-6 card-hover text-center">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Analytics Dashboard</h3>
+                    <p class="text-gray-600 text-sm mb-4">View community statistics and resolution trends</p>
+                    <button class="text-purple-600 font-medium text-sm hover:text-purple-800 transition-colors">View Analytics →</button>
+                </div>
+            </div>
+        </section>
 
-            // Theme toggle function
-            function toggleTheme() {
-                const isDark = body.classList.toggle("dark");
-                themeToggle?.classList.toggle("dark", isDark);
-                themeToggleMobile?.classList.toggle("dark", isDark);
+        <!-- Google Sign-in Section -->
+        <section class="fade-in mt-12">
+            <div class="interactive-card rounded-3xl p-8 text-center card-hover">
+                <div class="max-w-md mx-auto">
+                    <div class="w-20 h-20 bg-gradient-to-br from-red-500 to-orange-500 rounded-3xl flex items-center justify-center mx-auto mb-6 float-animation">
+                        <svg class="w-10 h-10 text-white" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">Sign in for Enhanced Experience</h3>
+                    <p class="text-gray-600 mb-6">Sign in with your college email to track your issues, access exclusive features, and get personalized updates.</p>
+                    <button id="googleSignInBtn" class="btn-primary text-white font-semibold py-4 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                        <span class="relative z-10 flex items-center justify-center space-x-3">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span>Sign in with Google</span>
+                        </span>
+                    </button>
+                    <p class="text-xs text-gray-500 mt-4">Only college email addresses are accepted</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-16 border-t border-gray-200 pt-8 pb-6">
+            <div class="flex flex-col md:flex-row justify-between items-center text-sm text-gray-600 space-y-4 md:space-y-0">
+                <div class="flex items-center space-x-6">
+                    <span>&copy; <span id="currentYear"></span> CrisisBoard. All rights reserved.</span>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-blue-600 transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Terms</a>
+                        <a href="#" class="hover:text-blue-600 transition-colors">Contact</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-500">Follow us:</span>
+                    <a href="https://github.com/Skrache/crisisboard" target="_blank" aria-label="GitHub" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 .5C5.37.5 0 5.87 0 12.5c0 5.29 3.438 9.772 8.207 11.366.6.111.793-.261.793-.579 0-.286-.011-1.04-.017-2.041-3.338.725-4.042-1.611-4.042-1.611-.546-1.387-1.333-1.755-1.333-1.755-1.089-.745.083-.73.083-.73 1.205.085 1.84 1.236 1.84 1.236 1.07 1.833 2.807 1.303 3.492.997.108-.775.419-1.304.762-1.604-2.665-.305-5.467-1.332-5.467-5.931 0-1.31.469-2.381 1.236-3.221-.124-.304-.536-1.528.117-3.183 0 0 1.008-.322 3.301 1.23a11.48 11.48 0 0 1 3.004-.404c1.018.005 2.043.138 3.003.404 2.293-1.552 3.299-1.23 3.299-1.23.655 1.655.243 2.879.12 3.183.77.84 1.235 1.911 1.235 3.221 0 4.61-2.807 5.624-5.48 5.921.43.37.823 1.102.823 2.222 0 1.605-.015 2.896-.015 3.289 0 .321.192.694.8.576C20.565 22.27 24 17.791 24 12.5 24 5.87 18.627.5 12 .5z"/>
+                        </svg>
+                    </a>
+                    <a href="#" target="_blank" aria-label="Twitter" class="text-gray-600 hover:text-blue-600 transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 4.557a9.93 9.93 0 0 1-2.828.775 4.932 4.932 0 0 0 2.165-2.724 9.864 9.864 0 0 1-3.127 1.195A4.916 4.916 0 0 0 16.616 3c-2.737 0-4.956 2.22-4.956 4.956 0 .39.045.765.127 1.124C7.728 8.9 4.1 6.884 1.671 3.897a4.935 4.935 0 0 0-.67 2.49c0 1.72.875 3.235 2.205 4.123a4.904 4.904 0 0 1-2.247-.621v.062c0 2.404 1.71 4.406 3.977 4.862a4.936 4.936 0 0 1-2.24.085 4.93 4.93 0 0 0 4.604 3.417A9.867 9.867 0 0 1 0 19.54 13.93 13.93 0 0 0 7.548 21.5c9.057 0 14.01-7.508 14.01-14.01 0-.213-.005-.425-.014-.636A10.025 10.025 0 0 0 24 4.557z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- React Components -->
+    <div id="complaintStatus"></div>
+    <div id="root"></div>
+
+    <!-- Scripts -->
+    <script>
+        // Set current year
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+        // Animation Controller
+        class AnimationController {
+            constructor() {
+                this.initializeAnimations();
+                this.initializeInteractions();
+            }
+
+            initializeAnimations() {
+                const observerOptions = {
+                    threshold: 0.1,
+                    rootMargin: '0px 0px -50px 0px'
+                };
+
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, observerOptions);
+
+                document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right, .scale-in').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+
+            initializeInteractions() {
+                // Ripple effect for buttons
+                document.querySelectorAll('.btn-primary').forEach(button => {
+                    button.addEventListener('click', this.createRipple);
+                });
+            }
+
+            createRipple(e) {
+                const button = e.currentTarget;
+                const ripple = document.createElement('span');
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple');
+                
+                button.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            }
+        }
+
+        // Theme Controller
+        class ThemeController {
+            constructor() {
+                this.body = document.body;
+                this.themeToggle = document.getElementById("themeToggle");
+                this.themeToggleMobile = document.getElementById("themeToggleMobile");
+                this.currentTheme = localStorage.getItem("theme") || "light";
+                
+                this.initializeTheme();
+                this.bindEvents();
+            }
+
+            initializeTheme() {
+                this.body.classList.toggle("dark", this.currentTheme === "dark");
+                this.themeToggle?.classList.toggle("dark", this.currentTheme === "dark");
+                this.themeToggleMobile?.classList.toggle("dark", this.currentTheme === "dark");
+            }
+
+            toggleTheme() {
+                const isDark = this.body.classList.toggle("dark");
+                this.themeToggle?.classList.toggle("dark", isDark);
+                this.themeToggleMobile?.classList.toggle("dark", isDark);
                 localStorage.setItem("theme", isDark ? "dark" : "light");
+            }
 
-                // Update dynamically created items
-                const darkModeItems =
-                    document.querySelectorAll(".dark-mode-item");
-                darkModeItems.forEach((item) => {
-                    if (isDark) {
-                        item.classList.add("dark-mode-item");
-                    } else {
-                        item.classList.remove("dark-mode-item");
+            bindEvents() {
+                this.themeToggle?.addEventListener("click", () => this.toggleTheme());
+                this.themeToggleMobile?.addEventListener("click", () => this.toggleTheme());
+            }
+        }
+
+        // Mobile Menu Controller
+        class MobileMenuController {
+            constructor() {
+                this.mobileMenu = document.querySelector('.sidebar');
+                this.openButton = document.getElementById('mobileMenuToggle');
+                this.closeButton = document.getElementById('mobileCloseBtn');
+                
+                this.bindEvents();
+            }
+
+            bindEvents() {
+                this.openButton?.addEventListener('click', () => this.openMenu());
+                this.closeButton?.addEventListener('click', () => this.closeMenu());
+                
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.mobileMenu?.contains(e.target) && !this.openButton?.contains(e.target)) {
+                        this.closeMenu();
                     }
                 });
             }
 
-            // Add event listeners for theme toggles
-            themeToggle?.addEventListener("click", toggleTheme);
-            themeToggleMobile?.addEventListener("click", toggleTheme);
+            openMenu() {
+                this.mobileMenu?.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
 
-            // Mobile menu toggle
-            mobileMenuToggle?.addEventListener("click", () => {
-                mobileMenuToggle.classList.toggle("active");
-                sidebar?.classList.toggle("open");
-            });
+            closeMenu() {
+                this.mobileMenu?.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
 
-            // Mobile close button
-            mobileCloseBtn?.addEventListener("click", () => {
-                mobileMenuToggle?.classList.remove("active");
-                sidebar?.classList.remove("open");
-            });
+        // Enhanced Form Handler
+        class FormHandler {
+            constructor() {
+                this.form = document.getElementById('complaintForm');
+                this.textArea = document.getElementById('issueText');
+                this.fileInput = document.getElementById('fileInput');
+                this.fileUploadArea = document.getElementById('fileUploadArea');
+                this.filePreviewContainer = document.getElementById('filePreviewContainer');
+                this.filePreviewGrid = document.getElementById('filePreviewGrid');
+                this.statusMessage = document.getElementById('statusMessage');
+                this.charCount = document.getElementById('charCount');
+                this.fileCount = document.getElementById('fileCount');
+                this.totalSize = document.getElementById('totalSize');
+                
+                this.selectedFiles = [];
+                this.maxFileSize = 5 * 1024 * 1024; // 5MB
+                this.maxTotalSize = 20 * 1024 * 1024; // 20MB
+                this.maxFiles = 10;
+                
+                this.bindEvents();
+            }
 
-            // Close mobile menu when clicking outside
-            document.addEventListener("click", (e) => {
-                if (
-                    !sidebar?.contains(e.target) &&
-                    !mobileMenuToggle?.contains(e.target)
-                ) {
-                    mobileMenuToggle?.classList.remove("active");
-                    sidebar?.classList.remove("open");
+            bindEvents() {
+                this.form?.addEventListener('submit', (e) => this.handleSubmit(e));
+                this.textArea?.addEventListener('input', () => this.updateCharCount());
+                this.fileInput?.addEventListener('change', (e) => this.handleFileSelect(e));
+                
+                // Drag and drop
+                this.fileUploadArea?.addEventListener('dragover', (e) => this.handleDragOver(e));
+                this.fileUploadArea?.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+                this.fileUploadArea?.addEventListener('drop', (e) => this.handleDrop(e));
+                this.fileUploadArea?.addEventListener('click', () => this.fileInput?.click());
+                
+                // Clear all files
+                document.getElementById('clearAllFiles')?.addEventListener('click', () => this.clearAllFiles());
+            }
+
+            updateCharCount() {
+                const count = this.textArea?.value.length || 0;
+                if (this.charCount) {
+                    this.charCount.textContent = `${count} / 500`;
+                    if (count < 20) {
+                        this.charCount.style.color = '#ef4444';
+                    } else if (count > 450) {
+                        this.charCount.style.color = '#f59e0b';
+                    } else {
+                        this.charCount.style.color = '#10b981';
+                    }
                 }
-            });
+            }
 
-            // Form handling is now managed in app.js
-        </script>
-        <script src="app.js"></script>
+            handleDragOver(e) {
+                e.preventDefault();
+                this.fileUploadArea?.classList.add('drag-over');
+            }
 
-        
-         <div id="root"></div>
+            handleDragLeave(e) {
+                e.preventDefault();
+                this.fileUploadArea?.classList.remove('drag-over');
+            }
 
-    <!-- ComplaintStatus component -->
+            handleDrop(e) {
+                e.preventDefault();
+                this.fileUploadArea?.classList.remove('drag-over');
+                const files = Array.from(e.dataTransfer.files);
+                this.processFiles(files);
+            }
+
+            handleFileSelect(e) {
+                const files = Array.from(e.target.files);
+                this.processFiles(files);
+            }
+
+            processFiles(files) {
+                const validFiles = files.filter(file => {
+                    if (file.size > this.maxFileSize) {
+                        this.showMessage(`File "${file.name}" is too large (max 5MB)`, 'error');
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (this.selectedFiles.length + validFiles.length > this.maxFiles) {
+                    this.showMessage(`Maximum ${this.maxFiles} files allowed`, 'error');
+                    return;
+                }
+
+                const totalSize = [...this.selectedFiles, ...validFiles].reduce((sum, file) => sum + file.size, 0);
+                if (totalSize > this.maxTotalSize) {
+                    this.showMessage('Total file size exceeds 20MB limit', 'error');
+                    return;
+                }
+
+                this.selectedFiles.push(...validFiles);
+                this.updateFilePreview();
+                this.showPrivacyBadge();
+            }
+
+            updateFilePreview() {
+                if (this.selectedFiles.length === 0) {
+                    this.filePreviewContainer?.classList.add('hidden');
+                    return;
+                }
+
+                this.filePreviewContainer?.classList.remove('hidden');
+                this.filePreviewGrid.innerHTML = '';
+
+                this.selectedFiles.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'interactive-card rounded-xl p-3 text-center relative card-hover';
+                    
+                    const fileIcon = this.getFileIcon(file.type);
+                    const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                    
+                    fileItem.innerHTML = `
+                        <div class="text-2xl mb-2">${fileIcon}</div>
+                        <div class="text-xs font-medium text-gray-800 truncate">${file.name}</div>
+                        <div class="text-xs text-gray-500">${fileSize} MB</div>
+                        <button type="button" class="remove-btn absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors" onclick="formHandler.removeFile(${index})">
+                            <svg class="w-3 h-3 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    `;
+                    
+                    this.filePreviewGrid.appendChild(fileItem);
+                });
+
+                this.updateFileStats();
+            }
+
+            getFileIcon(mimeType) {
+                if (mimeType.startsWith('image/')) return '📷';
+                if (mimeType.startsWith('video/')) return '🎬';
+                if (mimeType.startsWith('audio/')) return '🎵';
+                if (mimeType.includes('pdf')) return '📄';
+                if (mimeType.includes('document') || mimeType.includes('word')) return '📝';
+                return '📎';
+            }
+
+            removeFile(index) {
+                this.selectedFiles.splice(index, 1);
+                this.updateFilePreview();
+            }
+
+            clearAllFiles() {
+                this.selectedFiles = [];
+                this.updateFilePreview();
+                this.fileInput.value = '';
+            }
+
+            updateFileStats() {
+                const totalSize = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
+                const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(2);
+                
+                if (this.fileCount) this.fileCount.textContent = this.selectedFiles.length;
+                if (this.totalSize) this.totalSize.textContent = `${totalSizeMB} MB`;
+            }
+
+            showPrivacyBadge() {
+                const badge = document.getElementById('privacyBadgeContainer');
+                if (badge) {
+                    badge.style.opacity = '1';
+                    setTimeout(() => {
+                        badge.style.opacity = '0';
+                    }, 3000);
+                }
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                
+                const issueText = this.textArea?.value.trim();
+                if (!issueText || issueText.length < 20) {
+                    this.showMessage('Please provide a detailed description (minimum 20 characters)', 'error');
+                    return;
+                }
+
+                this.showMessage('Submitting your issue...', 'info');
+                this.form?.classList.add('loading');
+
+                try {
+                    // Simulate upload progress
+                    await this.simulateUpload();
+                    
+                    // Here you would integrate with your existing app.js functionality
+                    this.showMessage('Issue submitted successfully! You will receive updates on the progress.', 'success');
+                    this.resetForm();
+                } catch (error) {
+                    this.showMessage('Failed to submit issue. Please try again.', 'error');
+                } finally {
+                    this.form?.classList.remove('loading');
+                }
+            }
+
+            async simulateUpload() {
+                if (this.selectedFiles.length === 0) return;
+
+                const progressContainer = document.getElementById('uploadProgressContainer');
+                const progressBar = document.getElementById('uploadProgressBar');
+                const progressText = document.getElementById('uploadProgressText');
+                const progressPercentage = document.getElementById('uploadPercentage');
+
+                progressContainer?.classList.remove('hidden');
+
+                for (let i = 0; i <= 100; i += 10) {
+                    await new Promise(resolve => setTimeout(resolve, 100));
+                    if (progressBar) progressBar.style.width = `${i}%`;
+                    if (progressPercentage) progressPercentage.textContent = `${i}%`;
+                    if (progressText) {
+                        if (i < 30) progressText.textContent = 'Preparing files...';
+                        else if (i < 70) progressText.textContent = 'Uploading files...';
+                        else if (i < 90) progressText.textContent = 'Processing...';
+                        else progressText.textContent = 'Complete!';
+                    }
+                }
+
+                setTimeout(() => {
+                    progressContainer?.classList.add('hidden');
+                }, 2000);
+            }
+
+            showMessage(message, type) {
+                if (!this.statusMessage) return;
+                
+                const colors = {
+                    success: 'text-green-600 bg-green-50 border-green-200',
+                    error: 'text-red-600 bg-red-50 border-red-200',
+                    info: 'text-blue-600 bg-blue-50 border-blue-200'
+                };
+
+                this.statusMessage.className = `p-4 rounded-xl border-2 ${colors[type] || colors.info} transition-all duration-300`;
+                this.statusMessage.textContent = message;
+                this.statusMessage.style.opacity = '1';
+
+                if (type === 'success' || type === 'error') {
+                    setTimeout(() => {
+                        this.statusMessage.style.opacity = '0';
+                    }, 5000);
+                }
+            }
+
+            resetForm() {
+                this.form?.reset();
+                this.selectedFiles = [];
+                this.updateFilePreview();
+                this.updateCharCount();
+            }
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const animationController = new AnimationController();
+            const themeController = new ThemeController();
+            const mobileMenuController = new MobileMenuController();
+            window.formHandler = new FormHandler(); // Make it globally accessible for onclick handlers
+        });
+    </script>
+
+    <!-- External Scripts -->
+    <script src="app.js"></script>
     <script type="text/babel" src="complaintStatus.jsx"></script>
-
-    <!-- App.jsx -->
+    
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firebase.js"></script>
+    <script src="firebase.js"></script>
+    
+    <!-- React App -->
     <script type="text/babel">
-      function App() {
-        return <ComplaintStatus />;
-      }
-      const root = ReactDOM.createRoot(document.getElementById("root"));
-      root.render(<App />);
-      </script>
-        <!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firebase.js"></script>
-<script src="firebase.js"></script>
-<script type="text/babel" src="complaintStatus.jsx"></script>
+        function App() {
+            return <ComplaintStatus />;
+        }
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
+    </script>
 
+    <!-- Firebase Authentication -->
+    <script type="module">
+        import { auth, provider, signInWithPopup, signOut, onAuthStateChanged } from './firebase-config.js';
+        
+        onAuthStateChanged(auth, (user) => {
+            const signInBtn = document.getElementById("googleSignInBtn");
+            if (signInBtn) {
+                signInBtn.addEventListener("click", () => {
+                    signInWithPopup(auth, provider)
+                        .then((result) => {
+                            const user = result.user;
+                            console.log("User signed in:", user.email);
 
-
-        <script type="module">
-                    import { auth, provider, signInWithPopup, signOut, onAuthStateChanged } from './firebase-config.js';
-                    onAuthStateChanged(auth, (user) => {
-                        document.getElementById("googleSignInBtn").addEventListener("click", () => {
-                        signInWithPopup(auth, provider)
-                            .then((result) => {
-                                const user = result.user;
-                                console.log("User signed in:", user.email);
-
-                                const allowedDomains = ["@vupune.ac.in", "@college.edu", "@university.ac.in"]; // ✅ changed domain
-                                if (!allowedDomains.some(domain => user.email.toLowerCase().endsWith(domain))) { // ✅ lowercase check
-                                    alert("Only college emails allowed!");
-                                    signOut(auth);
-                                    return;
-                                }
-                                // ✅ redirect to index.html if valid
-                                window.location.href = "index.html";
-                            })
-                            .catch((error) => {
-                                console.error("Login failed:", error);
-                                alert("Sign-in error. Try again.");
-                            });
+                            const allowedDomains = ["@vupune.ac.in", "@college.edu", "@university.ac.in"];
+                            if (!allowedDomains.some(domain => user.email.toLowerCase().endsWith(domain))) {
+                                alert("Only college emails allowed!");
+                                signOut(auth);
+                                return;
+                            }
+                            window.location.href = "index.html";
+                        })
+                        .catch((error) => {
+                            console.error("Login failed:", error);
+                            alert("Sign-in error. Try again.");
                         });
-                    });
-
-                </script>
-
-    </body>
+                });
+            }
+        });
+    </script>
+</body>
 </html>
