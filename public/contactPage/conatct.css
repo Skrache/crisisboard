@@ -21,8 +21,8 @@ body.animate-Fill {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* vertical centering */
-    align-items: center;     /* horizontal centering */
+    justify-content: center; 
+    align-items: center;     
     font-family: Arial, sans-serif;
     color: #fff;
 }
@@ -97,6 +97,32 @@ form button {
 form button:hover {
     background: #5d7ed0;
 }
+
+.scroll-arrow {
+            position: fixed;
+            right: 20px;
+            font-size: 40px; 
+            color: blue;
+            background: #f3f4f6;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: background 0.3s;
+            z-index: 999;
+        }   
+
+        .scroll-arrow:hover {
+        background: #555;
+        color: white;
+        }
+
+        .scroll-up {
+        bottom: 90px; /* above the down arrow */
+        }
 
 /* Support email link */
 .support-email {
