@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+  />
+    <style>
+        @keyframes backgroundFill {
+            0%{
+                background-color: white;
+            }
+            50% {
+                background: linear-gradient(145deg, #46484d, #f3f4f6);
+            }
+            100%{
+                background: linear-gradient(145deg, #2a3341, #1b2233);
+            }
+        }
+
+        .animate-fill {
+            animation-name: backgroundFill;
+            animation-delay: 0.5s;
+            animation-duration: 1s;
+            animation-timing-function: ease-in-out;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes textFill {
+            from{opacity: 0; transform: translateX(10px);}
+            to{opacity: 1; transform: translateX(0px);}
+        }
+
+        .text-animate {
+            opacity: 0;
+            animation: textFill 1s ease-in-out forwards;
+            animation-delay: 1s;
+        }
+
+        .typewriter {
+            display: block;                    
+            overflow: hidden;                   
+            border-right: .15em solid white;   
+            border-left: .15em solid white;  
+            letter-spacing: .1em;
+            animation:
+                typing 3s steps(120, end),      
+                blink .75s step-end infinite;
+            white-space: normal;               
+            word-wrap: break-word;             
+            max-width: 60ch;                   
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        ul {
+            display: table;  
+            margin: 0 auto;     
+            text-align: left;   
+            list-style-position: inside;
+        }
+        .swiper {
+            width: 100%;
+            height: 600px;
+            margin: 40px 0;
+        }
+
+        .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .swiper-slide img {
+            width: 80%;
+            height: 100%;
+            display: block;
+            object-fit : contain;
+        }
+
+        .scroll-arrow {
+            position: fixed;
+            right: 20px;
+            font-size: 40px; 
+            color: blue;
+            background: #f3f4f6;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: background 0.3s;
+            z-index: 999;
+        }   
+
+        .scroll-arrow:hover {
+        background: #555;
+        color: white;
+        }
+
+        .scroll-up {
+        bottom: 90px; /* above the down arrow */
+        }
+    </style>
+</head>
+
+<body class="animate-fill min-h-screen">
+    <div class="flex items-center justify-between p-4">
+        <h1 class="text-animate tracking-widest text-3xl text-blue-200 font-bold">Unvale</h1>
+        <a href="/index.html" class="bg-white text-blue-600 font-bold px-6 py-2 rounded-full shadow hover:bg-blue-50 transition-all duration-300" style="margin-left:auto;">Home</a>
+    </div>
+    
+    <div class="justify-center items-center flex px-12 py-4">
+        <p class="typewriter text-4xl text-blue-200 px-12 py-4 text-center ">Unvale is a simple and powerful web app that helps college students submit complaints or issues to their college authorities — anonymously or with their identity. It makes sure that every complaint is sent to the right department and is also stored safely.</p>
+    </div>
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><img class="rounded-3xl width" src="/aboutPage/pictures/picture1.png" alt="picture1"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture2.png" alt="picture2"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture3.png" alt="picture3"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture4.png" alt="picture4"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture5.png" alt="picture5"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture6.png" alt="picture6"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture7.png" alt="picture7"></div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+
+    <div class="text-animate text-blue-200 p-8 margin-left-12 margin-right-12">
+        <h2 class="text-center font-bold text-6xl text-xl margin-bottom-">What does this app do ?</h2>
+        <div class="justify-center items-center flex px-12 py-4">
+            <p class="typewriter text-3xl text-blue-200 px-12 py-4 text-center">Our platform is designed to make student voices heard in a secure, transparent, and efficient way. Students can raise concerns—whether about hygiene, food quality, or bullying—without fear, knowing their issues will be delivered directly to the right authorities. With built-in AI and user-friendly tools, the process is simple, reliable, and empowering.</p>
+        </div>
+        
+        <ul class="px-12 py-4 space-y-1 text-lg leading-8 text-blue-200">
+            <li class="text-2xl">🔑 Students log in using their college email only.</li>
+            <li class="text-2xl">📝 They can submit any issue (like hygiene, food, bullying, etc.).</li>
+            <li class="text-2xl">🙈 If they want, they can stay anonymous.</li>
+            <li class="text-2xl">🤖 The issue is automatically categorized using AI (Gemini API).</li>
+            <li class="text-2xl">📬 The complaint is then emailed to the correct authority.</li>
+            <li class="text-2xl">📋 Students can see all their past complaints in a simple list.</li>
+            <li class="text-2xl">🗑️ They can also delete their complaints with a smooth animation.</li>
+        </ul>
+    </div>
+
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><img class="rounded-3xl width" src="/aboutPage/pictures/picture8.png" alt="picture8"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture9.png" alt="picture9"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture10.png" alt="picture10"></div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+
+    <div class="text-animate text-blue-200 p-8 margin-left-12 margin-right-12">
+        <h2 class="text-center font-bold text-6xl text-xl margin-bottom-">Main Features</h2>
+        <div class="justify-center items-center flex px-12 py-4">
+            <p class="typewriter text-4xl text-blue-200 px-12 py-4 text-center ">Our platform ensures secure access through college-only login, while also offering the option to submit complaints anonymously for greater comfort. Powered by AI (Gemini API), complaints are automatically categorized and instantly routed to the relevant department via email. Students can track and manage their own submissions, with the flexibility to delete entries anytime through a smooth, user-friendly interface.</p>
+        </div>
+    </div>
+
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><img class="rounded-3xl width" src="/aboutPage/pictures/picture11.jpg" alt="picture8"></div>
+            <div class="swiper-slide"><img src="/aboutPage/pictures/picture13.webp" alt="picture10"></div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+
+    <div class="text-animate text-blue-200 p-8 margin-left-12 margin-right-12">
+        <h2 class="text-center font-bold text-6xl text-xl margin-bottom-">How does it work ? </h2>
+        <div class="justify-center items-center flex px-12 py-4">
+            <p class="text-2xl text-blue-200 px-12 py-4 text-center ">Unvale ensures that every complaint is handled efficiently and securely. Here’s the simple flow:</p>
+        </div>
+        <ul class="px-12 py-4 space-y-1 text-lg leading-8 text-blue-200">
+            <li>🔑 <strong>Login</strong> – Students access the platform using their verified college email.</li>
+            <li>📝 <strong>Submit</strong> – They write their complaint and can choose to remain anonymous.</li>
+            <li>🤖 <strong>AI Categorization</strong> – Gemini AI automatically assigns the issue to the right department.</li>
+            <li>📬 <strong>Delivery & Storage</strong> – The complaint is emailed to the concerned authority and safely stored in Firestore.</li>
+            <li>📊 <strong>Dashboard</strong> – Students can track and manage their past submissions with options to delete if needed.</li>
+        </ul>
+    </div>
+
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><img class="rounded-3xl width" src="/aboutPage/pictures/picture14.png" alt="picture14"></div>
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+    </div>
+
+    <section class="my-10 text-center p-8">
+        <div class="p-8">
+            <h2 class="text-6xl text-blue-200 font-bold px-8 py-4">🧪 Example Categories</h2>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-6 text-xl">
+            <div class="bg-blue-200 p-4 rounded-xl shadow font-semibold">🧼 Hygiene</div>
+            <div class="bg-blue-200 p-4 rounded-xl shadow font-semibold">🛡️ Security</div>
+            <div class="bg-blue-200 p-4 rounded-xl shadow font-semibold">🍽️ Food Quality</div>
+            <div class="bg-blue-200 p-4 rounded-xl shadow font-semibold">🚫 Harassment/Bullying</div>
+            <div class="bg-blue-200 p-4 rounded-xl shadow font-semibold">💡 Electrical Issues</div>
+            <div class="bg-blue-200 p-4 rounded-xl shadow font-semibold">🧹 Cleanliness</div>
+            <div class="bg-blue-200 p-4 rounded-xl shadow font-semibold">🔧 Maintenance</div>
+        </div>
+    </section>
+
+    <button class="scroll-arrow scroll-up"><a href="#">&#9650;</a></button>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+    const swiper = new Swiper(".mySwiper", {
+    loop: true,
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      autoplay : {
+        delay:2000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      effect:'fade',
+    });
+  </script>
+
+</body>
+</html>
