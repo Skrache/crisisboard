@@ -1,3 +1,14 @@
+@keyframes textFill {
+            from{opacity: 0; transform: translateX(10px);}
+            to{opacity: 1; transform: translateX(0px);}
+        }
+
+        .text-animate {
+            opacity: 0;
+            animation: textFill 1s ease-in-out forwards;
+            animation-delay: 1s;
+        }
+
 @keyframes backgroundFill {
     0% { background: white; }
     50% { background: linear-gradient(145deg, #46484d, #f3f4f6); }
