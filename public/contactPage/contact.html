@@ -1,36 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
-    <title>Document</title>
-
-    <style>
-        @keyframes backgroundFill {
-            0% {
-                background: white;
-            }
-            50% {
-                background: linear-gradient(145deg, #46484d, #f3f4f6);;
-            }
-            100% {
-                background: linear-gradient(145deg, #2a3341, #1b2233);;
-            }
-        }
-
-        .animate-Fill {
-            animation: backgroundFill;
-            animation-delay: 0.5s;
-            animation-duration: 1s;
-            animation-timing-function: ease-in-out;
-            animation-fill-mode: forwards;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="conatct.css">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+<title>Contact Page</title>
 </head>
 <body class="animate-Fill">
-    
+<h1 class="gradient-text" id="typing"></h1>
+<p class="text-3xl text-blue-200 p-8">We’d love to hear from you! Fill out the form below and we’ll get back to you within 24 hours . </p>
+<form action="mailto:support@example.com" method="post" enctype="text/plain">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="6" required></textarea>
+
+        <button type="submit">Send Message</button>
+    </form>
+
+    <div class="support-email">
+        For technical support, email us at 
+        <a href="mailto:support@example.com">support@example.com</a>
+    </div>
+</div>
+
+<script>
+const textStart = "Contact ";
+const textLoop = "Us";
+const el = document.getElementById("typing");
+let index = 0;
+let isDeleting = false;
+
+function type() {
+    if (!isDeleting) {
+        // Typing
+        el.textContent = textStart + textLoop.slice(0, index);
+        index++;
+        if (index > textLoop.length) {
+            isDeleting = true;
+            setTimeout(type, 1000); // pause before deleting
+            return;
+        }
+    } else {
+        // Deleting
+        el.textContent = textStart + textLoop.slice(0, index);
+        index--;
+        if (index < 0) {
+            isDeleting = false;
+            setTimeout(type, 500); // pause before typing again
+            return;
+        }
+    }
+    setTimeout(type, isDeleting ? 150 : 200);
+}
+
+// Start the typewriter
+type();
+</script>
 </body>
 </html>
