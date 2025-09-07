@@ -17,6 +17,8 @@
       crossorigin
     ></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="stylesheet" href="index.css" />
+
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
@@ -429,7 +431,7 @@
       /* Dark mode enhancements */
       body.dark {
         background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
-        color: #f9fafb;
+          color: #f9fafb; /* light text in dark mode */
       }
 
       body.dark .mobile-header {
@@ -778,8 +780,30 @@
   </head>
 
   <body
+  
     class="min-h-screen bg-gray-50 text-gray-900 transition-all duration-300"
   >
+  <script>
+  const themeToggle = document.getElementById('themeToggle');
+  const themeToggleMobile = document.getElementById('themeToggleMobile');
+
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem(
+      'theme',
+      document.body.classList.contains('dark') ? 'dark' : 'light'
+    );
+  }
+
+  // Apply saved theme on page load
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+  }
+
+  themeToggle.addEventListener('click', toggleDarkMode);
+  themeToggleMobile.addEventListener('click', toggleDarkMode);
+</script>
+
     <!-- Background Pattern -->
     <div
       class="hero-pattern fixed inset-0 opacity-30 pointer-events-none"
@@ -915,7 +939,7 @@
                 />
               </svg>
             </div>
-            <h3 class="font-bold text-lg text-gray-800">Profile</h3>
+            <h3 class="font-bold text-lg ">Profile</h3>
           </div>
           <a
             href="Profile.html"
@@ -958,7 +982,7 @@
                 />
               </svg>
             </div>
-            <h3 class="font-bold text-lg text-gray-800">Your Complaints</h3>
+            <h3 class="font-bold text-lg ">Your Complaints</h3>
           </div>
           <a
             href="#"
@@ -1001,7 +1025,7 @@
                 />
               </svg>
             </div>
-            <h3 class="font-bold text-lg text-gray-800">Quick Stats</h3>
+            <h3 class="font-bold text-lg ">Quick Stats</h3>
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div
@@ -1044,8 +1068,8 @@
               </svg>
             </div>
             <div class="flex-1">
-              <h3 class="font-bold text-lg text-gray-800">Feedback</h3>
-              <p class="text-xs text-gray-600">Help us improve</p>
+              <h3 class="font-bold text-lg ">Feedback</h3>
+              <p class="text-xs text-gray-500">Help us improve</p>
             </div>
             <svg
               class="w-5 h-5 text-gray-400 flex-shrink-0"
@@ -1071,10 +1095,10 @@
       <div class="fade-in mb-6">
         <div class="flex items-center space-x-4 mb-4">
           <div>
-            <h1 class="text-3xl md:text-4xl font-black text-gray-800 mb-2">
+            <h1 class="text-3xl md:text-4xl font-black mb-2">
               Good evening !!
             </h1>
-            <p class="text-base md:text-lg text-gray-600">
+            <p class="text-base md:text-lg ">
               Submit and track community issues efficiently with our intelligent
               routing system
             </p>
@@ -1106,7 +1130,7 @@
             </span>
           </button>
           <button
-            class="tab-button text-gray-600 font-semibold hover:text-gray-800 hover:bg-white/50 transition-all duration-300"
+            class="tab-button font-semibold hover:text-gray-800 hover:bg-white transition-all duration-300"
           >
             <span class="flex items-center space-x-2">
               <svg
@@ -1126,7 +1150,7 @@
             </span>
           </button>
           <button
-            class="tab-button text-gray-600 font-semibold hover:text-gray-800 hover:bg-white/50 transition-all duration-300"
+            class="tab-button  font-semibold hover:text-gray-800 hover:bg-white transition-all duration-300"
           >
             <span class="flex items-center space-x-2">
               <svg
@@ -1172,10 +1196,10 @@
                 />
               </svg>
             </div>
-            <h3 class="text-2xl md:text-3xl font-black text-gray-800 mb-3">
+            <h3 class="text-2xl md:text-3xl font-black mb-3">
               Submit an Issue
             </h3>
-            <p class="text-sm md:text-base text-gray-600 max-w-2xl mx-auto">
+            <p class="text-sm md:text-base max-w-2xl mx-auto">
               Help us make your community better by reporting issues that need
               attention. Our AI will automatically route your concern to the
               right authorities.
@@ -1187,7 +1211,7 @@
             <div class="fade-in">
               <label
                 for="issueText"
-                class="block text-lg font-semibold text-gray-700 mb-3"
+                class="block text-lg font-semibold  mb-3"
               >
                 Issue Description
                 <span class="text-red-500">*</span>
@@ -1209,7 +1233,7 @@
 
             <!-- Enhanced File Upload Area -->
             <div class="fade-in">
-              <label class="block text-lg font-semibold text-gray-700 mb-3">
+              <label class="block text-lg font-semibold mb-3">
                 Attach Evidence (Optional)
               </label>
               <div
@@ -1226,7 +1250,7 @@
                 <div class="space-y-4">
                   <div class="text-6xl opacity-60">📎</div>
                   <div>
-                    <p class="text-xl font-semibold text-gray-700 mb-2">
+                    <p class="text-xl font-bold text-gray-500 mb-2">
                       Drag & drop files here
                     </p>
                     <p class="text-base text-gray-600">
@@ -1238,21 +1262,21 @@
                       >
                     </p>
                     <div
-                      class="mt-4 flex flex-wrap justify-center gap-2 text-xs text-gray-500"
+                      class="mt-4 flex flex-wrap justify-center gap-2 text-xs "
                     >
-                      <span class="px-2 py-1 bg-gray-100 rounded-full"
+                      <span class="px-2 py-1 bg-gray-500 text-white font-bold rounded-full"
                         >📷 Images</span
                       >
-                      <span class="px-2 py-1 bg-gray-100 rounded-full"
+                      <span class="px-2 py-1 bg-gray-500 text-white font-bold rounded-full"
                         >📄 PDFs</span
                       >
-                      <span class="px-2 py-1 bg-gray-100 rounded-full"
+                      <span class="px-2 py-1 bg-gray-500 text-white font-bold rounded-full"
                         >📝 Docs</span
                       >
-                      <span class="px-2 py-1 bg-gray-100 rounded-full"
+                      <span class="px-2 py-1 bg-gray-500 text-white font-bold rounded-full"
                         >🎵 Audio</span
                       >
-                      <span class="px-2 py-1 bg-gray-100 rounded-full"
+                      <span class="px-2 py-1 bg-gray-500 text-white font-bold rounded-full"
                         >🎬 Video</span
                       >
                     </div>
@@ -1268,7 +1292,7 @@
             <div id="filePreviewContainer" class="hidden fade-in">
               <div class="flex items-center justify-between mb-4">
                 <h4
-                  class="text-lg font-semibold text-gray-700 flex items-center space-x-2"
+                  class="text-lg font-semibold  flex items-center space-x-2"
                 >
                   <svg
                     class="w-5 h-5 text-blue-600 flex-shrink-0"
@@ -1308,7 +1332,7 @@
               </div>
               <div id="filePreviewGrid" class="file-preview-grid mb-4"></div>
               <div
-                class="flex justify-between items-center text-sm text-gray-500 p-3 bg-gray-50 rounded-xl"
+                class="flex justify-between items-center text-sm p-3 bg-gray-50 rounded-xl"
               >
                 <span><span id="fileCount">0</span> files selected</span>
                 <span><span id="totalSize">0 MB</span> total size</span>
@@ -1338,7 +1362,7 @@
                       </svg>
                     </div>
                     <div>
-                      <h4 class="font-semibold text-gray-800">
+                      <h4 class="font-semibold 0">
                         Uploading Files
                       </h4>
                       <p class="text-sm text-gray-600" id="uploadProgressText">
@@ -1397,7 +1421,7 @@
             <div class="fade-in">
               <div class="interactive-card rounded-2xl p-6">
                 <h4
-                  class="font-semibold text-gray-800 mb-4 flex items-center space-x-2"
+                  class="font-semibold 0 mb-4 flex items-center space-x-2"
                 >
                   <svg
                     class="w-5 h-5 text-purple-600 flex-shrink-0"
@@ -1431,7 +1455,7 @@
                     />
                     <div class="flex-1">
                       <span
-                        class="text-gray-800 font-medium group-hover:text-blue-600 transition-colors"
+                        class=" font-medium group-hover:text-blue-600 transition-colors"
                         >Include my email in the report</span
                       >
                       <p class="text-sm text-gray-600 mt-1">
@@ -1450,7 +1474,7 @@
                     />
                     <div class="flex-1">
                       <span
-                        class="text-gray-800 font-medium group-hover:text-red-600 transition-colors"
+                        class=" font-medium group-hover:text-red-600 transition-colors"
                         >Mark as urgent</span
                       >
                       <p class="text-sm text-gray-600 mt-1">
@@ -1506,7 +1530,7 @@
       <!-- Quick Actions Section -->
       <section class="slide-in-right mt-12">
         <h2
-          class="text-2xl font-bold text-gray-800 mb-6 flex items-center space-x-3"
+          class="text-2xl font-bold  mb-6 flex items-center space-x-3"
         >
           <svg
             class="w-7 h-7 text-blue-600 flex-shrink-0"
@@ -1542,10 +1566,10 @@
                 />
               </svg>
             </div>
-            <h3 class="font-bold text-lg text-gray-800 mb-2">
+            <h3 class="font-bold text-lg mb-2">
               Track Your Issues
             </h3>
-            <p class="text-gray-600 text-sm mb-4">
+            <p class="text-gray-600 font-bold text-sm mb-4">
               Monitor the progress of your submitted complaints in real-time
             </p>
             <button
@@ -1573,10 +1597,10 @@
                 />
               </svg>
             </div>
-            <h3 class="font-bold text-lg text-gray-800 mb-2">
+            <h3 class="font-bold text-lg mb-2">
               Community Forum
             </h3>
-            <p class="text-gray-600 text-sm mb-4">
+            <p class="text-gray-600 font-bold text-sm mb-4">
               Connect with neighbors and discuss local issues
             </p>
             <button
@@ -1604,10 +1628,10 @@
                 />
               </svg>
             </div>
-            <h3 class="font-bold text-lg text-gray-800 mb-2">
+            <h3 class="font-bold text-lg  mb-2">
               Analytics Dashboard
             </h3>
-            <p class="text-gray-600 text-sm mb-4">
+            <p class="text-gray-600 font-bold text-sm mb-4">
               View community statistics and resolution trends
             </p>
             <button
@@ -1645,7 +1669,7 @@
                 />
               </svg>
             </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-4">
+            <h3 class="text-2xl font-bold  mb-4">
               Sign in for Enhanced Experience
             </h3>
             <p class="text-base text-gray-600 mb-6">
@@ -2258,6 +2282,9 @@
           });
         }
       });
+
+      
+      
     </script>
   </body>
 </html>
